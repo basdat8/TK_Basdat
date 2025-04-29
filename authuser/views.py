@@ -12,7 +12,7 @@ def login_view(request):
             return redirect('dashboard')
         else:
             messages.error(request, 'Email atau password salah.')
-    return render(request, 'authuser/login.html')
+    return render(request, 'login.html')
 
 def logout_view(request):
     logout(request)
