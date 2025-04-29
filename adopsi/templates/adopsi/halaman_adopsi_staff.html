@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manajemen Adopsi Satwa - Staff</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    .hewan-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .hewan-card {
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 15px;
+      width: 250px;
+      text-align: center;
+      background-color: #f9f9f9;
+    }
+    .hewan-card img {
+      max-width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+    .laporan-container {
+      border: 1px solid #aaa;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 5px;
+      background-color: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      display: none;
+    }
+    .hidden {
+      display: none;
+    }
+    .button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 8px 12px;
+      margin: 5px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .button.secondary {
+      background-color: #f44336;
+    }
+    .button:hover {
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+  <h1>Daftar Satwa</h1>
+  <div class="hewan-container">
+    {% for hewan in hewan_list %}
+    <div class="hewan-card">
+      <img src="{{ hewan.foto }}" alt="{{ hewan.nama }}">
+      <p><strong>{{ hewan.nama }}</strong></p>
+      <p>Jenis: {{ hewan.jenis }}</p>
+      <p>Kondisi: {{ hewan.kondisi }}</p>
+      <p>Status Adopsi:
+        {% if hewan.diadopsi %}
+          <span style="color: green;"><strong>Diadopsi</strong></span>
+        {% else %}
+          <span style="color: red;"><strong>Belum Diadopsi</strong></span>
+        {% endif %}
+      </p>
+      {% if hewan.diadopsi %}
+        <button class="button" onclick="showDetail('{{ hewan.id }}')">Lihat Detail</button>
+      {% else %}
+        <button class="button" onclick="showFormAdopsi('{{ hewan.id }}')">Daftarkan Adopter</button>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+
+  {% for hewan in hewan_list %}
+  {% if hewan.diadopsi %}
+  <div id="detail-{{ hewan.id }}" class="laporan-container hidden">
+    <button class="button secondary" onclick="hideDetail('{{ hewan.id }}')">Tutup</button>
+    <h2>Detail Adopsi Hewan</h2>
+    <p><strong>Nama hewan:</strong> {{ hewan.nama }}</p>
+    <p><strong>Jenis hewan:</strong> {{ hewan.jenis }}</p>
+    <p><strong>Adopter saat ini:</strong> {{ hewan.nama_adopter }}</p>
+    <p><strong>Tanggal mulai adopsi:</strong> {{ hewan.tanggal_mulai }}</p>
+    <p><strong>Tanggal akhir adopsi:</strong> {{ hewan.tanggal_akhir }}</p>
+    <p><strong>Nominal kontribusi:</strong> Rp{{ hewan.kontribusi }}</p>
+    <p><strong>Status pembayaran:</strong>
+      <select id="status-pembayaran-{{ hewan.id }}">
+        <option value="tertunda" {% if hewan.status_pembayaran == 'tertunda' %}selected{% endif %}>Tertunda</option>
+        <option value="lunas" {% if hewan.status_pembayaran == 'lunas' %}selected{% endif %}>Lunas</option>
+      </select>
+      <button class="button" onclick="updateStatusPembayaran('{{ hewan.id }}')">Simpan Status</button>
+    </p>
+    <button class="button secondary" onclick="hentikanAdopsi('{{ hewan.id }}')">Hentikan Adopsi</button>
+  </div>
+  {% else %}
+  <div id="form-{{ hewan.id }}" class="laporan-container hidden">
+    <button class="button secondary" onclick="hideFormAdopsi('{{ hewan.id }}')">Tutup</button>
+    <h2>Pendataan Adopter</h2>
+    <form id="form-adopsi-{{ hewan.id }}" onsubmit="return submitFormAdopsi('{{ hewan.id }}');">
+      <label for="username-{{ hewan.id }}">Username calon adopter:</label>
+      <input type="text" id="username-{{ hewan.id }}" required /><br><br>
+
+      <label>Calon adopter akan mengadopsi satwa sebagai:</label><br>
+      <input type="radio" name="tipe_{{ hewan.id }}" id="tipe-individu-{{ hewan.id }}" value="individu" checked /> 
+      <label for="tipe-individu-{{ hewan.id }}">Individu</label>
+      <input type="radio" name="tipe_{{ hewan.id }}" id="tipe-organisasi-{{ hewan.id }}" value="organisasi" /> 
+      <label for="tipe-organisasi-{{ hewan.id }}">Organisasi</label><br><br>
+
+      <button type="button" class="button" onclick="verifikasiAkun('{{ hewan.id }}')">Verifikasi Akun</button>
+      <button type="button" class="button secondary" onclick="hideFormAdopsi('{{ hewan.id }}')">Batal</button>
+    </form>
+  </div>
+  {% endif %}
+  {% endfor %}
+
+  <script>
+    // Data dummy untuk simulasi
+    const hewanData = {
+      'hewan1': {
+        nama: 'Simba',
+        jenis: 'Singa (Panthera leo)',
+        kondisi: 'Sehat',
+        foto: '/api/placeholder/200/150',
+        kontribusiIndividu: '500000',
+        kontribusiOrganisasi: '1000000'
+      },
+      'hewan2': {
+        nama: 'Jumbo',
+        jenis: 'Gajah (Elephas maximus)',
+        kondisi: 'Sehat',
+        foto: '/api/placeholder/200/150',
+        kontribusiIndividu: '750000',
+        kontribusiOrganisasi: '1500000'
+      },
+      'hewan3': {
+        nama: 'Koko',
+        jenis: 'Orangutan (Pongo pygmaeus)',
+        kondisi: 'Sehat',
+        foto: '/api/placeholder/200/150',
+        kontribusiIndividu: '600000',
+        kontribusiOrganisasi: '1200000'
+      }
+    };
+    
+    // Data dummy untuk adopter dengan kontribusi tertinggi
+    const topAdopterData = [
+      {
+        nama_adopter: 'PT Konservasi Indonesia',
+        tipe: 'organisasi',
+        alamat: 'Jl. Konservasi No. 123, Jakarta',
+        kontak: '021-5551234',
+        total_kontribusi: '5500000',
+        jumlah_adopsi: '3',
+        hewan_diadopsi: 'Gajah, Orangutan, Harimau'
+      },
+      {
+        nama_adopter: 'Yayasan Peduli Satwa',
+        tipe: 'organisasi',
+        alamat: 'Jl. Satwa Lestari No. 45, Bandung',
+        kontak: '022-6667890',
+        total_kontribusi: '4200000',
+        jumlah_adopsi: '2',
+        hewan_diadopsi: 'Badak, Komodo'
+      },
+      {
+        nama_adopter: 'Ahmad Setiawan',
+        tipe: 'individu',
+        alamat: 'Jl. Merdeka No. 78, Surabaya',
+        kontak: '081234567890',
+        total_kontribusi: '3200000',
+        jumlah_adopsi: '4',
+        hewan_diadopsi: 'Zebra, Jerapah, Kuda Nil, Flamingo'
+      },
+      {
+        nama_adopter: 'Keluarga Wijaya',
+        tipe: 'individu',
+        alamat: 'Jl. Harmoni No. 56, Yogyakarta',
+        kontak: '087654321098',
+        total_kontribusi: '2800000',
+        jumlah_adopsi: '2',
+        hewan_diadopsi: 'Singa, Macan Tutul'
+      },
+      {
+        nama_adopter: 'CV Hijau Lestari',
+        tipe: 'organisasi',
+        alamat: 'Jl. Kebon Raya No. 67, Bogor',
+        kontak: '0251-8765432',
+        total_kontribusi: '2500000',
+        jumlah_adopsi: '1',
+        hewan_diadopsi: 'Gorila'
+      }
+    ];
+    
+    // Data dummy untuk riwayat adopsi
+    const adopsiHistoryData = [
+      {
+        nama_hewan: 'Melly',
+        jenis_hewan: 'Gajah',
+        tanggal_mulai: '2025-02-26',
+        tanggal_akhir: '2025-08-26',
+        nominal: '850000',
+        status: 'sedang berlangsung'
+      },
+      {
+        nama_hewan: 'Simba',
+        jenis_hewan: 'Singa',
+        tanggal_mulai: '2024-07-10',
+        tanggal_akhir: '2024-10-10',
+        nominal: '500000',
+        status: 'selesai'
+      },
+      {
+        nama_hewan: 'Nala',
+        jenis_hewan: 'Zebra',
+        tanggal_mulai: '2023-12-12',
+        tanggal_akhir: '2024-12-12',
+        nominal: '1200000',
+        status: 'sedang berlangsung'
+      },
+      {
+        nama_hewan: 'Rio',
+        jenis_hewan: 'Harimau',
+        tanggal_mulai: '2023-01-01',
+        tanggal_akhir: '2023-07-01',
+        nominal: '800000',
+        status: 'selesai'
+      }
+    ];
+    
+    // Fungsi untuk membuat navbar menu
+    function createNavbar() {
+      const navbar = document.createElement('div');
+      navbar.className = 'navbar';
+      navbar.style.cssText = `
+        background-color: #4CAF50;
+        overflow: hidden;
+        margin-bottom: 20px;
+      `;
+      
+      navbar.innerHTML = `
+        <a href="#" onclick="showMainPage()" style="float: left; display: block; color: white; text-align: center; padding: 14px 16px; text-decoration: none;">Daftar Satwa</a>
+        <a href="#" onclick="showTopAdopters()" style="float: left; display: block; color: white; text-align: center; padding: 14px 16px; text-decoration: none;">Adopter Kontribusi Tertinggi</a>
+        <a href="#" onclick="showAdopterHistory()" style="float: left; display: block; color: white; text-align: center; padding: 14px 16px; text-decoration: none;">Riwayat Adopsi</a>
+      `;
+      
+      // Tambahkan navbar ke dalam body sebagai elemen pertama
+      document.body.insertBefore(navbar, document.body.firstChild);
+    }
+    
+    // Fungsi untuk menampilkan halaman utama daftar satwa
+    function showMainPage() {
+      // Sembunyikan semua container lain
+      hideAllContainers();
+      
+      // Tampilkan container hewan
+      document.querySelector('.hewan-container').style.display = 'flex';
+    }
+    
+    // Fungsi untuk menampilkan halaman adopter kontribusi tertinggi
+    function showTopAdopters() {
+      // Sembunyikan semua container
+      hideAllContainers();
+      
+      // Cek apakah container top adopter sudah ada
+      let topAdopterContainer = document.getElementById('top-adopter-container');
+      if (!topAdopterContainer) {
+        // Buat container baru jika belum ada
+        topAdopterContainer = document.createElement('div');
+        topAdopterContainer.id = 'top-adopter-container';
+        topAdopterContainer.className = 'laporan-container';
+        topAdopterContainer.style.display = 'block';
+        
+        // Buat judul
+        const title = document.createElement('h2');
+        title.textContent = 'Adopter dengan Kontribusi Tertinggi';
+        title.style.textAlign = 'center';
+        
+        // Buat tabel
+        const table = document.createElement('table');
+        table.style.cssText = `
+          width: 100%;
+          border-collapse: collapse;
+        `;
+        
+        // Buat header tabel
+        let headerRow = table.createTHead().insertRow();
+        const headers = ['No', 'Nama Adopter', 'Tipe', 'Total Kontribusi', 'Jumlah Adopsi', 'Hewan yang Diadopsi', 'Aksi'];
+        
+        headers.forEach(headerText => {
+          let headerCell = document.createElement('th');
+          headerCell.textContent = headerText;
+          headerCell.style.cssText = `
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            background-color: #4CAF50;
+            color: white;
+          `;
+          headerRow.appendChild(headerCell);
+        });
+        
+        // Buat body tabel
+        const tbody = table.createTBody();
+        topAdopterData.forEach((adopter, index) => {
+          let row = tbody.insertRow();
+          
+          // Nomor
+          let cell1 = row.insertCell();
+          cell1.textContent = index + 1;
+          cell1.style.border = '1px solid #ddd';
+          cell1.style.padding = '8px';
+          
+          // Nama Adopter
+          let cell2 = row.insertCell();
+          cell2.textContent = adopter.nama_adopter;
+          cell2.style.border = '1px solid #ddd';
+          cell2.style.padding = '8px';
+          
+          // Tipe Adopter
+          let cell3 = row.insertCell();
+          cell3.textContent = adopter.tipe.charAt(0).toUpperCase() + adopter.tipe.slice(1);
+          cell3.style.border = '1px solid #ddd';
+          cell3.style.padding = '8px';
+          
+          // Total Kontribusi
+          let cell4 = row.insertCell();
+          cell4.textContent = 'Rp' + adopter.total_kontribusi;
+          cell4.style.border = '1px solid #ddd';
+          cell4.style.padding = '8px';
+          
+          // Jumlah Adopsi
+          let cell5 = row.insertCell();
+          cell5.textContent = adopter.jumlah_adopsi;
+          cell5.style.border = '1px solid #ddd';
+          cell5.style.padding = '8px';
+          
+          // Hewan yang Diadopsi
+          let cell6 = row.insertCell();
+          cell6.textContent = adopter.hewan_diadopsi;
+          cell6.style.border = '1px solid #ddd';
+          cell6.style.padding = '8px';
+          
+          // Aksi
+          let cell7 = row.insertCell();
+          cell7.style.border = '1px solid #ddd';
+          cell7.style.padding = '8px';
+          
+          const detailButton = document.createElement('button');
+          detailButton.textContent = 'Lihat Detail';
+          detailButton.className = 'button';
+          detailButton.onclick = function() {
+            showAdopterDetail(adopter);
+          };
+          cell7.appendChild(detailButton);
+          
+          // Warna baris berselang-seling
+          if (index % 2 === 0) {
+            row.style.backgroundColor = '#f2f2f2';
+          }
+        });
+        
+        // Gabungkan elemen-elemen
+        topAdopterContainer.appendChild(title);
+        topAdopterContainer.appendChild(table);
+        
+        // Tambahkan container ke dalam dokumen
+        document.body.appendChild(topAdopterContainer);
+      } else {
+        // Tampilkan container jika sudah ada
+        topAdopterContainer.style.display = 'block';
+      }
+    }
+    
+    // Fungsi untuk menampilkan halaman riwayat adopsi
+    function showAdopterHistory() {
+      // Sembunyikan semua container
+      hideAllContainers();
+      
+      // Cek apakah container riwayat adopsi sudah ada
+      let historyContainer = document.getElementById('history-container');
+      if (!historyContainer) {
+        // Buat container baru jika belum ada
+        historyContainer = document.createElement('div');
+        historyContainer.id = 'history-container';
+        historyContainer.className = 'laporan-container';
+        historyContainer.style.display = 'block';
+        
+        // Buat konten riwayat adopsi
+        historyContainer.innerHTML = `
+          <h2 style="text-align: center;">Riwayat Adopsi</h2>
+          
+          <p><a href="#" onclick="showMainPage()" style="color: blue; text-decoration: none;">[Kembali]</a></p>
+          
+          <div style="margin-bottom: 20px;">
+            <p><strong>Nama Adopter:</strong> <span id="history-nama-adopter">Ahmad Setiawan</span></p>
+            <p><strong>Alamat Adopter:</strong> <span id="history-alamat-adopter">Jl. Merdeka No. 78, Surabaya</span></p>
+            <p><strong>Kontak Adopter:</strong> <span id="history-kontak-adopter">081234567890</span></p>
+          </div>
+          
+          <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+              <tr style="background-color: #4CAF50; color: white;">
+                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Nama Hewan</th>
+                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Jenis Hewan</th>
+                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Tanggal Mulai Adopsi</th>
+                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Tanggal Akhir Adopsi</th>
+                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Nominal Kontribusi</th>
+                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${adopsiHistoryData.map((item, index) => `
+                <tr ${index % 2 === 0 ? 'style="background-color: #f2f2f2;"' : ''}>
+                  <td style="border: 1px solid #ddd; padding: 8px;">${item.nama_hewan}</td>
+                  <td style="border: 1px solid #ddd; padding: 8px;">${item.jenis_hewan}</td>
+                  <td style="border: 1px solid #ddd; padding: 8px;">${item.tanggal_mulai}</td>
+                  <td style="border: 1px solid #ddd; padding: 8px;">${item.tanggal_akhir}</td>
+                  <td style="border: 1px solid #ddd; padding: 8px;">Rp${item.nominal}</td>
+                  <td style="border: 1px solid #ddd; padding: 8px;">
+                    <button class="button" style="background-color: ${item.status === 'sedang berlangsung' ? '#4CAF50' : '#cccccc'};">
+                      ${item.status === 'sedang berlangsung' ? '[Sedang Berlangsung]' : '[Hapus]'}
+                    </button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+          
+          <p style="margin-top: 20px;"><strong>Keterangan:</strong> Riwayat adopsi menampilkan data adopsi yang sudah berakhir maupun masih berlangsung, asalkan status pembayarannya sudah lunas. Namun data yang bisa dihapus hanya yang periode adopsinya sudah berakhir.</p>
+        `;
+        
+        // Tambahkan container ke dalam dokumen
+        document.body.appendChild(historyContainer);
+      } else {
+        // Tampilkan container jika sudah ada
+        historyContainer.style.display = 'block';
+      }
+    }
+    
+    // Fungsi untuk menampilkan detail adopter
+    function showAdopterDetail(adopter) {
+      // Sembunyikan semua container
+      hideAllContainers();
+      
+      // Buat container untuk detail adopter
+      const detailContainer = document.createElement('div');
+      detailContainer.id = 'adopter-detail-container';
+      detailContainer.className = 'laporan-container';
+      detailContainer.style.display = 'block';
+      
+      // Buat konten detail adopter
+      detailContainer.innerHTML = `
+        <button class="button secondary" style="float: right;" onclick="showTopAdopters()">Kembali</button>
+        <h2>Detail Adopter</h2>
+        
+        <div style="margin-bottom: 20px;">
+          <p><strong>Nama Adopter:</strong> ${adopter.nama_adopter}</p>
+          <p><strong>Tipe Adopter:</strong> ${adopter.tipe.charAt(0).toUpperCase() + adopter.tipe.slice(1)}</p>
+          <p><strong>Alamat:</strong> ${adopter.alamat}</p>
+          <p><strong>Kontak:</strong> ${adopter.kontak}</p>
+          <p><strong>Total Kontribusi:</strong> Rp${adopter.total_kontribusi}</p>
+          <p><strong>Jumlah Adopsi:</strong> ${adopter.jumlah_adopsi}</p>
+          <p><strong>Hewan yang Diadopsi:</strong> ${adopter.hewan_diadopsi}</p>
+        </div>
+        
+        <h3>Riwayat Adopsi</h3>
+        <table style="width: 100%; border-collapse: collapse;">
+          <thead>
+            <tr style="background-color: #4CAF50; color: white;">
+              <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Nama Hewan</th>
+              <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Jenis Hewan</th>
+              <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Tanggal Mulai</th>
+              <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Tanggal Akhir</th>
+              <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Nominal</th>
+              <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${adopsiHistoryData.filter((_, index) => index < 2).map((item, index) => `
+              <tr ${index % 2 === 0 ? 'style="background-color: #f2f2f2;"' : ''}>
+                <td style="border: 1px solid #ddd; padding: 8px;">${item.nama_hewan}</td>
+                <td style="border: 1px solid #ddd; padding: 8px;">${item.jenis_hewan}</td>
+                <td style="border: 1px solid #ddd; padding: 8px;">${item.tanggal_mulai}</td>
+                <td style="border: 1px solid #ddd; padding: 8px;">${item.tanggal_akhir}</td>
+                <td style="border: 1px solid #ddd; padding: 8px;">Rp${item.nominal}</td>
+                <td style="border: 1px solid #ddd; padding: 8px;">
+                  ${item.status === 'sedang berlangsung' ? 
+                    '<span style="color: green; font-weight: bold;">Aktif</span>' : 
+                    '<span style="color: gray;">Selesai</span>'}
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+      
+      // Tambahkan container ke dalam dokumen
+      document.body.appendChild(detailContainer);
+    }
+    
+    // Fungsi untuk menyembunyikan semua container
+    function hideAllContainers() {
+      // Sembunyikan container hewan
+      const hewanContainer = document.querySelector('.hewan-container');
+      if (hewanContainer) {
+        hewanContainer.style.display = 'none';
+      }
+      
+      // Sembunyikan semua laporan container
+      document.querySelectorAll('.laporan-container').forEach(container => {
+        container.style.display = 'none';
+      });
+    }
+    
+    // Fungsi untuk menampilkan detail hewan
+    function showDetail(id) {
+      // Sembunyikan semua container yang mungkin terbuka
+      document.querySelectorAll('.laporan-container').forEach(container => {
+        container.style.display = 'none';
+        container.classList.add('hidden');
+      });
+      
+      // Tampilkan detail yang dipilih
+      const detailElement = document.getElementById('detail-' + id);
+      if (detailElement) {
+        detailElement.style.display = 'block';
+        detailElement.classList.remove('hidden');
+        
+        // Scroll ke bagian atas detail
+        detailElement.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        console.error('Element dengan ID detail-' + id + ' tidak ditemukan');
+      }
+    }
+
+    // Fungsi untuk menyembunyikan detail hewan
+    function hideDetail(id) {
+      const detailElement = document.getElementById('detail-' + id);
+      if (detailElement) {
+        detailElement.style.display = 'none';
+        detailElement.classList.add('hidden');
+      }
+    }
+
+    // Fungsi untuk menampilkan form adopsi
+    function showFormAdopsi(id) {
+      // Sembunyikan semua container yang mungkin terbuka
+      document.querySelectorAll('.laporan-container').forEach(container => {
+        container.style.display = 'none';
+        container.classList.add('hidden');
+      });
+      
+      // Tampilkan form yang dipilih
+      const formElement = document.getElementById('form-' + id);
+      if (formElement) {
+        formElement.style.display = 'block';
+        formElement.classList.remove('hidden');
+        
+        // Scroll ke bagian atas form
+        formElement.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        console.error('Element dengan ID form-' + id + ' tidak ditemukan');
+      }
+    }
+
+    // Fungsi untuk menyembunyikan form adopsi
+    function hideFormAdopsi(id) {
+      const formElement = document.getElementById('form-' + id);
+      if (formElement) {
+        formElement.style.display = 'none';
+        formElement.classList.add('hidden');
+      }
+    }
+
+    // Fungsi untuk verifikasi akun adopter
+    function verifikasiAkun(id) {
+      const username = document.getElementById('username-' + id).value;
+      if (!username) {
+        alert('Mohon isi username calon adopter!');
+        return;
+      }
+      
+      // Di sini logika untuk verifikasi akun
+      // Alih-alih alert, kita akan membuat dan menampilkan form adopsi
+      
+      // Ambil tipe adopsi yang dipilih
+      const tipeAdopsi = document.querySelector('input[name="tipe_' + id + '"]:checked').value;
+      
+      // Sembunyikan semua laporan container
+      document.querySelectorAll('.laporan-container').forEach(container => {
+        container.style.display = 'none';
+        container.classList.add('hidden');
+      });
+      
+      // Buat form adopsi berdasarkan tipe yang dipilih
+      createAdoptionForm(id, username, tipeAdopsi);
+    }
+
+    // Fungsi untuk menampilkan dan membuat form adopsi
+    function createAdoptionForm(id, username, tipeAdopsi) {
+      // Membuat container untuk form adopsi
+      const mainContainer = document.createElement('div');
+      mainContainer.className = 'laporan-container';
+      mainContainer.id = 'form-adopsi-detail-' + id;
+      mainContainer.style.display = 'block';
+      
+      // Buat header dan content form berdasarkan tipe adopsi
+      const formTitle = document.createElement('h2');
+      formTitle.textContent = 'FORM ADOPSI SATWA';
+      formTitle.style.textAlign = 'center';
+      
+      // Ambil data hewan dari data dummy
+      const hewan = hewanData[id] || {
+        nama: 'Satwa ' + id,
+        jenis: 'Jenis belum diketahui',
+        kondisi: 'Sehat',
+        kontribusiIndividu: '500000',
+        kontribusiOrganisasi: '1000000'
+      };
+      
+      let formContent = '';
+      
+      if (tipeAdopsi === 'individu') {
+        formContent = `
+          <div style="border: 1px solid #ccc; padding: 15px; margin-bottom: 10px;">
+            <p><strong>Pihak di bawah ini,</strong></p>
+            <p>Nama: <span id="nama-adopter">${username}</span> (boleh juga dijadikan isian)</p>
+            <p>NIK: <span id="nik-adopter">[isian]</span></p>
+            <p>Alamat: <span id="alamat-adopter">[alamat di pengunjung]</span></p>
+            <p>Nomor telepon: <span id="telepon-adopter">[no_telepon di pengguna]</span></p>
+            <p>(selanjutnya disebut sebagai Adopter)</p>
+            <p>dengan ini menyatakan kepedulian dan minat untuk mengadopsi secara simbolis satwa</p>
+            <p>Nama: <span id="nama-hewan">${hewan.nama}</span></p>
+            <p>Jenis: <span id="jenis-hewan">${hewan.jenis}</span></p>
+            <p>Adopter juga bersedia memberikan kontribusi finansial kepada pihak taman safari sebagai dukungan untuk pemeliharaan satwa:</p>
+            <p>Nominal: <span id="nominal-kontribusi">Rp ${hewan.kontribusiIndividu}</span></p>
+            <p>untuk periode adopsi selama 
+              <select id="periode-adopsi">
+                <option value="3">3</option>
+                <option value="6">6</option>
+                <option value="12" selected>12</option>
+              </select> bulan.
+            </p>
+          </div>
+        `;
+      } else {
+        formContent = `
+          <div style="border: 1px solid #ccc; padding: 15px; margin-bottom: 10px;">
+            <p><strong>Pihak di bawah ini, selaku organisasi/perusahaan</strong></p>
+            <p>Nama: <span id="nama-organisasi">${username}</span></p>
+            <p>NPP: <span id="npp-organisasi">[isian]</span></p>
+            <p>Alamat: <span id="alamat-organisasi">[alamat di pengunjung]</span></p>
+            <p>Kontak: <span id="kontak-organisasi">[no_telepon di pengguna]</span></p>
+            <p>(selanjutnya disebut sebagai Adopter)</p>
+            <p>dengan ini menyatakan kepedulian dan minat untuk mengadopsi secara simbolis satwa</p>
+            <p>Nama: <span id="nama-hewan-org">${hewan.nama}</span></p>
+            <p>Jenis: <span id="jenis-hewan-org">${hewan.jenis}</span></p>
+            <p>Adopter juga bersedia memberikan kontribusi finansial kepada pihak taman safari sebagai dukungan untuk pemeliharaan satwa:</p>
+            <p>Nominal: <span id="nominal-kontribusi-org">Rp ${hewan.kontribusiOrganisasi}</span></p>
+            <p>untuk periode adopsi selama 
+              <select id="periode-adopsi-org">
+                <option value="3">3</option>
+                <option value="6">6</option>
+                <option value="12" selected>12</option>
+              </select> bulan.
+            </p>
+          </div>
+        `;
+      }
+      
+      // Buat tombol submit dan batal
+      const buttonContainer = document.createElement('div');
+      buttonContainer.style.textAlign = 'center';
+      buttonContainer.innerHTML = `
+        <button class="button" onclick="submitFormAdopsi('${id}', '${tipeAdopsi}')">Submit Form</button>
+        <button class="button secondary" onclick="batalkanFormAdopsi('${id}')">Batal</button>
+      `;
+      
+      // Gabungkan semua elemen
+      mainContainer.innerHTML = `
+        <button class="button secondary" style="float: right;" onclick="batalkanFormAdopsi('${id}')">Tutup</button>
+        ${formTitle.outerHTML}
+        ${formContent}
+        ${buttonContainer.outerHTML}
+      `;
+      
+      // Tambahkan form ke dalam dokumen
+      document.body.appendChild(mainContainer);
+      
+      // Scroll ke form
+      mainContainer.scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    // Fungsi untuk membatalkan form adopsi
+    function batalkanFormAdopsi(id) {
+      const formElement = document.getElementById('form-adopsi-detail-' + id);
+      if (formElement) {
+        formElement.remove();
+      }
+    }
+    
+    // Fungsi untuk menangani submission form adopsi
+    function submitFormAdopsi(id, tipeAdopsi) {
+      // Logika untuk mengirim data adopsi ke server
+      console.log('Mengadopsi hewan ' + id + ' dengan tipe adopsi ' + tipeAdopsi);
+      
+      alert('Form adopsi berhasil disubmit!');
+      
+      // Hapus form setelah submit
+      batalkanFormAdopsi(id);
+      
+      // Refresh halaman atau update UI jika diperlukan
+      // location.reload();
+      
+      return false;
+    }
+
+    // Fungsi untuk update status pembayaran
+    function updateStatusPembayaran(id) {
+      const statusPembayaran = document.getElementById('status-pembayaran-' + id).value;
+      
+      // Logika untuk memperbarui status pembayaran
+      alert('Status pembayaran berhasil diperbarui menjadi: ' + statusPembayaran);
+    }
+
+    // Fungsi untuk menghentikan adopsi
+    function hentikanAdopsi(id) {
+      if (confirm('Apakah Anda yakin ingin menghentikan adopsi ini?')) {
+        // Logika untuk menghentikan adopsi
+        alert('Adopsi berhasil dihentikan!');
+        // Refresh halaman atau update UI
+      }
+    }
+    
+    // Panggil fungsi createNavbar saat halaman dimuat
+    document.addEventListener('DOMContentLoaded', function() {
+      createNavbar();
+    });
+  </script>
+</body>
+</html>

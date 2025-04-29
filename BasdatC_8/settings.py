@@ -39,7 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'authuser',
     'kuning',
+<<<<<<< HEAD
     'biru',
+=======
+    'adopsi',
+>>>>>>> be46b019df2449929a3341d1b16ee01a022ceaf0
 ]
 
 MIDDLEWARE = [
