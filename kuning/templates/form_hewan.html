@@ -1,0 +1,23 @@
+<h2>Form Tambah/Edit Satwa</h2>
+<form method="post">
+    {% csrf_token %}
+    Nama Individu: <input type="text" name="nama" value="{{ data.nama|default:'' }}"><br>
+    Spesies: <input type="text" name="spesies" value="{{ data.spesies|default:'' }}"><br>
+    Asal Hewan: <input type="text" name="asal_hewan" value="{{ data.asal_hewan|default:'' }}"><br>
+    Tanggal Lahir: <input type="date" name="tanggal_lahir" value="{{ data.tanggal_lahir|default:'' }}"><br>
+    Status Kesehatan: 
+    <select name="status_kesehatan">
+        <option value="Sehat" {% if data.status_kesehatan == "Sehat" %}selected{% endif %}>Sehat</option>
+        <option value="Sakit" {% if data.status_kesehatan == "Sakit" %}selected{% endif %}>Sakit</option>
+        <option value="Pemantauan" {% if data.status_kesehatan == "Pemantauan" %}selected{% endif %}>Dalam Pemantauan</option>
+    </select><br>
+    Habitat:
+    <select name="nama_habitat">
+        {% for h in habitats %}
+            <option value="{{ h }}" {% if data.nama_habitat == h %}selected{% endif %}>{{ h }}</option>
+        {% endfor %}
+    </select><br>
+    URL Foto Satwa: <input type="text" name="url_foto" value="{{ data.url_foto|default:'' }}"><br>
+    <button type="submit">SIMPAN</button>
+</form>
+<a href="{% url 'list_hewan' %}">[BATAL]</a>

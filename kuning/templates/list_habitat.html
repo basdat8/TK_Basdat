@@ -1,0 +1,15 @@
+<h2>Daftar Habitat</h2>
+<a href="{% url 'tambah_habitat' %}">+ Tambah Habitat</a>
+<table border="1">
+<tr><th>Nama Habitat</th><th>Luas Area</th><th>Kapasitas</th><th>Status Lingkungan</th><th>Aksi</th></tr>
+{% for h in data %}
+<tr>
+    <td>{{ h.nama }}</td><td>{{ h.luas_area }}</td><td>{{ h.kapasitas }}</td><td>{{ h.status }}</td>
+    <td>
+        <a href="{% url 'detail_habitat' h.nama %}">Detail</a> |
+        <a href="{% url 'edit_habitat' h.nama %}">Edit</a> |
+        <a href="{% url 'hapus_habitat' h.nama %}">Hapus</a>
+    </td>
+</tr>
+{% endfor %}
+</table>

@@ -1,0 +1,18 @@
+<h2>DETAIL HABITAT: {{ habitat.nama }}</h2>
+<p>Luas Area: {{ habitat.luas_area }} m²</p>
+<p>Status Lingkungan: {{ habitat.status }}</p>
+<p>Kapasitas Maksimal: {{ habitat.kapasitas }} hewan</p>
+
+<h3>DAFTAR HEWAN DALAM HABITAT</h3>
+<table border="1">
+<tr><th>Nama Individu</th><th>Spesies</th><th>Asal Hewan</th><th>Tanggal Lahir</th><th>Status Kesehatan</th></tr>
+{% for h in hewan_list %}
+<tr>
+    <td>{{ h.nama }}</td><td>{{ h.spesies }}</td><td>{{ h.asal_hewan }}</td>
+    <td>{{ h.tanggal_lahir }}</td><td>{{ h.status_kesehatan }}</td>
+</tr>
+{% endfor %}
+</table>
+
+<p><a href="{% url 'edit_habitat' habitat.nama %}">[Edit Habitat]</a> | <a href="{% url 'hapus_habitat' habitat.nama %}">[Hapus Habitat]</a></p>
+<a href="{% url 'list_habitat' %}">[Kembali]</a>
