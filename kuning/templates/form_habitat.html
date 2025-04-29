@@ -1,0 +1,10 @@
+<h2>Form Tambah/Edit Habitat</h2>
+<form method="post">
+    {% csrf_token %}
+    Nama Habitat: <input type="text" name="nama" value="{{ data.nama|default:'' }}"><br>
+    Luas Area: <input type="number" name="luas_area" value="{{ data.luas_area|default:'' }}"><br>
+    Kapasitas Maksimal: <input type="number" name="kapasitas" value="{{ data.kapasitas|default:'' }}"><br>
+    Status Lingkungan: <textarea name="status">{{ data.status|default:'' }}</textarea><br>
+    <button type="submit">SIMPAN PERUBAHAN</button>
+</form>
+<a href="{% url 'list_habitat' %}">[BATAL]</a>

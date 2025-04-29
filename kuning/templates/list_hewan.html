@@ -1,0 +1,18 @@
+<h2>Data Satwa</h2>
+<a href="{% url 'tambah_hewan' %}">+ Tambah Satwa</a>
+<table border="1">
+<tr>
+    <th>Nama Individu</th><th>Spesies</th><th>Asal Hewan</th><th>Tanggal Lahir</th>
+    <th>Status Kesehatan</th><th>Habitat</th><th>Foto</th><th>Aksi</th>
+</tr>
+{% for h in data %}
+<tr>
+    <td>{{ h.nama }}</td><td>{{ h.spesies }}</td><td>{{ h.asal_hewan }}</td><td>{{ h.tanggal_lahir }}</td>
+    <td>{{ h.status_kesehatan }}</td><td>{{ h.nama_habitat }}</td><td>[foto {{ h.nama }}]</td>
+    <td>
+        <a href="{% url 'edit_hewan' h.id %}">Edit</a> |
+        <a href="{% url 'hapus_hewan' h.id %}">Hapus</a>
+    </td>
+</tr>
+{% endfor %}
+</table>
