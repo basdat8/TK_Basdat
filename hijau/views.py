@@ -1,28 +1,17 @@
-from django.shortcuts import render
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
-from django.urls import reverse_lazy
-from .models import CatatanMedis
+from django.shortcuts import render, redirect
+from django.db import connection
+
+
 
 # Create your views here.
 
-class CatatanMedisListView(ListView):
-    model = CatatanMedis
-    template_name = 'catatanmedis_list.html'
-    context_object_name = "catatanmedis"
+def list_catatan_medis(request):
+    return render(request, 'catatanmedis_list.html', {})
 
-class CatatanMedisCreateView(CreateView):
-    model = CatatanMedis
-    fields = '__all__'
-    template_name = 'catatanmedis_form.html'
-    success_url = reverse_lazy('catatanmedis_list')
+def add_catatan_medis(request):
+    return render(request, 'catatanmedis_form.html', {})
 
-class CatatanMedisUpdateView(UpdateView):
-    model = CatatanMedis
-    fields = '__all__'
-    template_name = 'catatanmedis_form.html'
-    success_url = reverse_lazy('catatanmedis_list')
+def edit_catatan_medis(request):
+    return render(request, 'catatanmedis_edit.html', {})
 
-class CatatanMedisDeleteView(DeleteView):
-    model = CatatanMedis
-    template_name = 'catatanmedis_delete.html'
-    success_url = reverse_lazy('catatanmedis_list')
+

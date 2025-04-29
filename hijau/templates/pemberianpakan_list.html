@@ -1,0 +1,34 @@
+<html>
+<head>
+    <title> Pemberian Pakan</title>
+</head>
+<body>
+<h1>Pemberian Pakan</h1>
+<div><a href="{% url 'pemeriksaan-add' %}">[+Tambah Jadwal Pemeriksaan]</a></div>
+
+<table border="1">
+    <tr>
+        <th>Jenis Pakan</th>
+        <th>Jumlah Pakan</th>
+        <th>Jadwal</th>
+        <th>Status</th>
+
+        <th>Aksi</th>
+    </tr>
+    {% for catatan in catatanmedis %}
+        <tr>
+            <td>{{ pakan.jenis }}</td>
+            <td>{{ pakan.jumlah }}</td>
+            <td>{{ pakan.jadwal }}</td>
+            <td>{{ pakan.status }}</td>
+            <td>
+                {#                    <a href="{% url 'catatan-edit' catatan.id %}">[Edit]</a> |#}
+                {#                    <a href="{% url 'catatan-delete' catatan.id %}">[Hapus]</a>#}
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+
+</body>
+
+</html>

@@ -1,0 +1,43 @@
+<html>
+<head>
+    <title>Tambah Catatan Medis</title>
+</head>
+<body>
+    <h1>Tambah Catatan Medis</h1>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <!-- Tanggal Pemeriksaan -->
+        <label for="tanggal_pemeriksaan">Tanggal Pemeriksaan:</label>
+        <input type="date" name="tanggal_pemeriksaan" required><br><br>
+
+        <!-- Status Kesehatan -->
+        <label for="status_kesehatan">Status Kesehatan:</label>
+        <select name="status_kesehatan" required>
+            <option value="sehat">Sehat</option>
+            <option value="sakit">Sakit</option>
+        </select><br><br>
+
+        <!-- Diagnosis -->
+        <label for="diagnosis">Diagnosis:</label>
+        <input type="text" name="diagnosis"><br><br>
+
+        <!-- Pengobatan -->
+        <label for="pengobatan">Pengobatan:</label>
+        <input type="text" name="pengobatan"><br><br>
+
+        <!-- Catatan Tindak Lanjut -->
+        <label for="catatan_tindak_lanjut">Catatan Tindak Lanjut:</label>
+        <input type="text" name="catatan_tindak_lanjut"><br><br>
+
+        <!-- Dokter Hewan (terisi otomatis) -->
+        <input type="hidden" name="username_dh" value="{{ user.username }}">
+
+
+        <button type="submit">Simpan</button>
+    </form>
+
+    <a href="{% url 'list_catatan_medis' %}">[batal]</a>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<html>
+<head>
+    <title>Riwayat Pemberian Pakan</title>
+</head>
+<body>
+
+<table border="1">
+    <tr>
+        <th>Nama Individu (hewan)</th>
+        <th>Spesies</th>
+        <th>Asal Hewan</th>
+        <th>Tanggal Lahir</th>
+        <th>Habitat</th>
+        <th>Status Kesehatan</th>
+        <th>Jenis Pakan</th>
+        <th>Jumlah Pakan</th>
+        <th>Jadwal</th>
+    </tr>
+    {% for catatan in catatanmedis %}
+        <tr>
+
+            <td>{{ pakan.jumlah }}</td>
+            <td>{{ pakan.jadwal }}</td>
+            <td>{{ pakan.status }}</td>
+            <td>
+                {#                    <a href="{% url 'catatan-edit' catatan.id %}">[Edit]</a> |#}
+                {#                    <a href="{% url 'catatan-delete' catatan.id %}">[Hapus]</a>#}
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+
+</body>
+
+</html>

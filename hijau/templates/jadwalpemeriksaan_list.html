@@ -1,0 +1,29 @@
+<html>
+<head>
+    <title> Jadwal Pemeriksaan Kesehatan</title>
+</head>
+<body>
+<h1>Jadwal Pemeriksaan Kesehatan</h1>
+<div><h2>Frekuensi Pemeriksaan Rutin: 3 bulan sekali<a href="{% url 'pemeriksaan-edit' %}">[Edit]</a>
+    <a href="{% url 'pemeriksaan-add' %}">[+Tambah Jadwal Pemeriksaan]</a></h2></div>
+
+<table border="1">
+    <tr>
+        <th>Tanggal Pemeriksaan</th>
+
+        <th>Aksi</th>
+    </tr>
+    {% for catatan in catatanmedis %}
+        <tr>
+            <td>{{ catatan.tanggal_pemeriksaan }}</td>
+            <td>
+                {#                    <a href="{% url 'catatan-edit' catatan.id %}">[Edit]</a> |#}
+                {#                    <a href="{% url 'catatan-delete' catatan.id %}">[Hapus]</a>#}
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+
+</body>
+
+</html>
