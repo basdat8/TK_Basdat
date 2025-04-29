@@ -1,0 +1,27 @@
+<h1>Rekam Medis</h1>
+<a href="{% url 'catatanmedis-add' %}">[+Tambah Rekam Medis]</a>
+<table border="1">
+    <tr>
+        <th>Tanggal Pemeriksaan</th>
+        <th>Nama Dokter</th>
+        <th>Status Kesehatan</th>
+        <th>Diagnosa</th>
+        <th>Pengobatan</th>
+        <th>Catatan Tindak Lanjut</th>
+        <th>Aksi</th>
+    </tr>
+    {% for catatan in catatanmedis %}
+    <tr>
+        <td>{{ catatan.tanggal_pemeriksaan }}</td>
+        <td>{{ catatan.username_dh }}</td>
+        <td>{{ catatan.status_kesehatan }}</td>
+        <td>{{ catatan.diagnosa }}</td>
+        <td>{{ catatan.pengobatan }}</td>
+        <td>{{ catatan.catatan_tindak_lanjut }}</td>
+        <td>
+                    <a href="{% url 'catatan-edit' catatan.id %}">[Edit]</a> |
+                    <a href="{% url 'catatan-delete' catatan.id %}">[Hapus]</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
