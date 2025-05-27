@@ -39,9 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'authuser',
     'kuning',
+<<<<<<< HEAD
+    'biru',
+=======
     'adopsi',
-    'hijau',
-
+>>>>>>> be46b019df2449929a3341d1b16ee01a022ceaf0
 ]
 
 MIDDLEWARE = [
@@ -91,7 +93,6 @@ DATABASES = {
         }
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
