@@ -1,6 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rekam Medis</title>
+
+    <style>
+        /* Table styling */
+        .table-container {
+            border-collapse: collapse;
+            font-family: Arial, sans-serif;
+            width: 100%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .table-container th,
+        .table-container td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .table-container th {
+            background-color: #4CAF50;
+            color: white;
+            border-bottom: 2px solid #006b1b;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .table-container tr {
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .table-container tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .table-container tr:hover {
+            background-color: #e9f7fe;
+        }
+
+        .table-container tr:last-child,
+        .table-container td:last-child {
+            border-right: none;
+        }
+
+        /* Modal backdrop */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Modal content box */
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Form styling */
+        .modal-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        /* Button styling */
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+
+        .btn-table{
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 8px 16px;
+            margin: 3px;
+            border-radius: 4px;
+        }
+        .btn-table:hover{
+            opacity: 0.8;
+        }
+
+        .btn-submit {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            padding: 8px 16px;
+            margin: 3px;
+        }
+        .btn-submit:hover {
+            background-color: #43a047;
+        }
+
+        .btn-cancel {
+            background-color: #999999;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            padding: 8px 16px;
+            margin: 3px;
+        }
+
+        .btn-cancel:hover {
+            background-color: #888888;
+        }
+
+        .btn-delete-form {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            padding: 8px 16px;
+            margin: 3px;
+        }
+
+        .btn-delete-form:hover {
+            background-color: #e53935;
+        }
+
+        /* Open modal button */
+        .btn-add-catatan {
+            padding: 10px 20px;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        .btn-add-catatan:hover {
+            background-color: #1e88e5;
+        }
+    </style>
+</head>
+
+<body>
 <h1>Rekam Medis</h1>
-<a href="{% url 'catatanmedis-add' %}">[+Tambah Rekam Medis]</a>
-<table border="1">
+<button class="btn-add-catatan" onclick="openAddForm()">+Tambah Rekam Medis</button>
+
+<table class="table-container">
+    <thead>
     <tr>
         <th>Tanggal Pemeriksaan</th>
         <th>Nama Dokter</th>
@@ -9,20 +189,177 @@
         <th>Pengobatan</th>
         <th>Catatan Tindak Lanjut</th>
         <th>Aksi</th>
-    </tr>
-    {% for catatan in catatanmedis %}
-    <tr>
+    </thead>
+    {% for catatan in data %}
+    <tbody>
         <td>{{ catatan.tanggal_pemeriksaan }}</td>
-        <td>{{ catatan.username_dh }}</td>
+        <td>dr. {{ catatan.nama_depan }} {{ catatan.nama_tengah }} {{ catatan.nama_belakang }}</td>
         <td>{{ catatan.status_kesehatan }}</td>
-        <td>{{ catatan.diagnosa }}</td>
+        <td>{{ catatan.diagnosis }}</td>
         <td>{{ catatan.pengobatan }}</td>
         <td>{{ catatan.catatan_tindak_lanjut }}</td>
         <td>
-{#                    <a href="{% url 'catatan-edit' catatan.id %}">[Edit]</a> |#}
-{#                    <a href="{% url 'catatan-delete' catatan.id %}">[Hapus]</a>#}
+                    <button class="btn-table" onclick="openEditForm()">Edit</button>
+                    <button class="btn-table" onclick="openDeleteConfirmation()">Hapus</button>
         </td>
-    </tr>
     {% endfor %}
 </table>
 
+
+<!-- Add form modal -->
+<div id="addForm" class="modal">
+    <div class="modal-content">
+        <h2>FORM PENCATATAN REKAM MEDIS</h2>
+        <form id="modalForm" class="modal-form" method="POST" action="{% url 'add_catatan_medis' id=id username_dh=username_dh %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="date">Tanggal Pemeriksaan:</label>
+                <input type="date" id="date" name="tanggal_pemeriksaan" required><br>
+            </div>
+
+            <div class="form-group">
+                <label for="status">Status:</label>
+                <select name="status" id="status" onchange="changeRequirement()" required>
+                    <option value="sehat">Sehat</option>
+                    <option value="sakit">Sakit</option>
+                </select><br>
+            </div>
+
+            <div class="form-group">
+                <label for="diagnosis">Diagnosa:</label>
+                <input type="text" id="diagnosis" name="diagnosis"><br>
+            </div>
+
+            <div class="form-group">
+                <label for="pengobatan">Pengobatan:</label>
+                <input type="text" id="pengobatan" name="pengobatan"><br>
+            </div>
+
+            <div class="form-buttons">
+                <button type="submit" class="btn btn-submit">Simpan</button>
+                <button type="button" class="btn btn-cancel" onclick="closeModal()">Batal</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- Edit Modal -->
+<div id="editForm" class="modal">
+    <div class="modal-content">
+        <h2>EDIT REKAM MEDIS</h2>
+        <form id="modalForm" class="modal-form" method="POST" action="{% url 'edit_catatan_medis'  id=id username_dh=username_dh %}">
+            <div class="form-group">
+                <label for="catatan_baru">Catatan Tindak Lanjut:</label>
+                <input type="text" id="catatan_baru" name="catatan_baru">
+            </div>
+
+            <div class="form-group">
+                <label for="diagnosis_baru">Diagnosa Baru:</label>
+                <input type="text" id="diagnosis_baru" name="diagnosis_baru" required>
+            </div>
+
+            <div class="form-group">
+                <label for="pengobatan_baru">Pengobatan Baru:</label>
+                <input type="text" id="diagnosis_baru" name="diagnosis_baru" required>
+            </div>
+
+
+            <div class="form-buttons">
+                <button type="submit" class="btn btn-submit">Submit</button>
+                <button type="button" class="btn btn-cancel" onclick="closeModal()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- Delete Modal -->
+<div id="deleteData" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Hapus Rekam Medis</h2>
+        <p>Apakah anda yakin ingin menghapus rekam medis ini?</p>
+        <div class="modal-buttons">
+            <button id="confirmBtn" class="btn-delete-form">Ya</button>
+            <button id="cancelBtn" class="btn-submit" onclick="closeModal()">Tidak</button>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    // Get the modal
+    const addForm = document.getElementById("addForm");
+    const editForm = document.getElementById("editForm");
+    const deleteData = document.getElementById("deleteData");
+
+    // Open the modal
+    function openAddForm() {
+        addForm.style.display = "flex";
+    }
+
+    function openEditForm() {
+        editForm.style.display = "flex";
+    }
+
+    function openDeleteConfirmation() {
+        deleteData.style.display = "flex";
+    }
+
+    // Close the modal
+    function closeModal() {
+        addForm.style.display = "none";
+        editForm.style.display = "none";
+        deleteData.style.display = "none";
+    }
+
+    function changeRequirement() {
+        const status = document.getElementById("status").value;
+        const diagnosis = document.getElementById("diagnosis");
+        const pengobatan = document.getElementById("pengobatan");
+
+        diagnosis.required = false;
+        pengobatan.required = false;
+
+        if (status === "sakit") {
+            diagnosis.required = true;
+            pengobatan.required = true;
+        }
+    }
+
+    // Handle form submission
+    form.addEventListener("submit", function(event) {
+        event.preventDefault(); // Prevent default form submission
+
+        // Get form values
+        const formData = {
+            name: document.getElementById("name").value,
+            email: document.getElementById("email").value,
+            subject: document.getElementById("subject").value,
+            message: document.getElementById("message").value
+        };
+
+        // Here you would typically send the data to a server
+        console.log("Form submitted:", formData);
+
+        // Show success message
+        alert("Thank you for your submission!");
+
+        // Close the modal
+        closeModal();
+
+        // Reset the form
+        form.reset();
+    });
+
+    // Close modal when clicking outside the content
+    window.addEventListener("click", function(event) {
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+</script>
+
+</body>
+</html>

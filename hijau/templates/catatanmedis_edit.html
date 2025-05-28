@@ -1,20 +1,14 @@
-
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Tambah Catatan Medis</title>
+    <title>Edit Catatan Medis</title>
 </head>
+
 <body>
-    <h1>Tambah Catatan Medis</h1>
+    <h1>Edit Catatan Medis</h1>
 
     <form method="post">
         {% csrf_token %}
-
-        <!-- Catatan Tindak Lanjut -->
-        <label for="status_kesehatan">Status Kesehatan:</label>
-        <select name="status_kesehatan" required>
-            <option value="sehat">Sehat</option>
-            <option value="sakit">Sakit</option>
-        </select><br><br>
 
         <!-- Catatan Tindak Lanjut -->
         <label for="Catatan Tindak Lanjut">Catatan Tindak Lanjut:</label>
