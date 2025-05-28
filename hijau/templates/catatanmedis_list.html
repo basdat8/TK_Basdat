@@ -210,7 +210,7 @@
 <div id="addForm" class="modal">
     <div class="modal-content">
         <h2>FORM PENCATATAN REKAM MEDIS</h2>
-        <form id="modalForm" class="modal-form" method="POST" action="{% url 'add_catatan_medis' id=id username_dh=username_dh %}">
+        <form id="modalForm" class="modal-form" method="POST" action="{% url 'add_catatan_medis' id=id %}">
             {% csrf_token %}
             <div class="form-group">
                 <label for="date">Tanggal Pemeriksaan:</label>
@@ -248,7 +248,7 @@
 <div id="editForm" class="modal">
     <div class="modal-content">
         <h2>EDIT REKAM MEDIS</h2>
-        <form id="modalForm" class="modal-form" method="POST" action="{% url 'edit_catatan_medis'  id=id username_dh=username_dh %}">
+        <form id="modalForm" class="modal-form" method="POST" action="{% url 'edit_catatan_medis'  id=id %}">
             <div class="form-group">
                 <label for="catatan_baru">Catatan Tindak Lanjut:</label>
                 <input type="text" id="catatan_baru" name="catatan_baru">
@@ -327,38 +327,6 @@
             pengobatan.required = true;
         }
     }
-
-    // Handle form submission
-    form.addEventListener("submit", function(event) {
-        event.preventDefault(); // Prevent default form submission
-
-        // Get form values
-        const formData = {
-            name: document.getElementById("name").value,
-            email: document.getElementById("email").value,
-            subject: document.getElementById("subject").value,
-            message: document.getElementById("message").value
-        };
-
-        // Here you would typically send the data to a server
-        console.log("Form submitted:", formData);
-
-        // Show success message
-        alert("Thank you for your submission!");
-
-        // Close the modal
-        closeModal();
-
-        // Reset the form
-        form.reset();
-    });
-
-    // Close modal when clicking outside the content
-    window.addEventListener("click", function(event) {
-        if (event.target === modal) {
-            closeModal();
-        }
-    });
 </script>
 
 </body>
