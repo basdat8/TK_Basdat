@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Staf Administrasi - Sizopi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+
+        .header {
+            background: linear-gradient(135deg,  #abf6c5 0%, #90cb81 100%);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .user-welcome {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: background 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .card h3 {
+            color: #333;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f8f9fa;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #666;
+        }
+
+        .info-value {
+            color: #333;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .table th,
+        .table td {
+            text-align: left;
+            padding: 0.75rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #666;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            .container {
+                padding: 1rem;
+            }
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1>🏥 Sizopi - Dashboard Staf Administrasi</h1>
+            {% if user_data %}
+            <div class="user-welcome">
+                Selamat datang, {{ user_data.nama_lengkap|title }}!
+            </div>
+            {% endif %}
+        </div>
+        <a href="{% url 'auth:logout' %}" class="logout-btn">Logout</a>
+    </div>
+
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="error-message">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% if user_data %}
+        <div class="content-grid">
+            <!-- Common Dashboard Info -->
+            <div class="card">
+                <h3>Informasi Profil</h3>
+                <div class="info-item">
+                    <span class="info-label">Nama Lengkap:</span>
+                    <span class="info-value">{{ user_data.nama_lengkap|title }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Username:</span>
+                    <span class="info-value">{{ user_data.username }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Email:</span>
+                    <span class="info-value">{{ user_data.email }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Nomor Telepon:</span>
+                    <span class="info-value">{{ user_data.no_telepon }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Peran:</span>
+                    <span class="info-value">{{ user_data.role|title }}</span>
+                </div>
+            </div>
+
+            <!-- ID Staf -->
+            <div class="card">
+                <h3>ID Staf</h3>
+                <p><strong>{{ user_data.id_staf|default:"ID-TIDAK-TERSEDIA" }}</strong><br>
+                Departemen: Administrasi<br>
+                Posisi: Staf Administrasi Senior<br>
+                Shift: Reguler (08:00 - 17:00)</p>
+            </div>
+
+            <!-- Ringkasan Penjualan Tiket Hari Ini -->
+            <div class="card">
+                <h3>Ringkasan Penjualan Tiket Hari Ini</h3>
+                <div class="info-item">
+                    <span class="info-label">Tiket Reguler:</span>
+                    <span class="info-value">234 tiket - Rp 7.020.000</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Tiket VIP:</span>
+                    <span class="info-value">45 tiket - Rp 4.500.000</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Tiket Grup:</span>
+                    <span class="info-value">12 tiket - Rp 960.000</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Tiket Anak:</span>
+                    <span class="info-value">89 tiket - Rp 1.780.000</span>
+                </div>
+                <div class="info-item" style="border-top: 2px solid #f0f0f0; margin-top: 0.5rem; padding-top: 0.75rem;">
+                    <span class="info-label"><strong>Total Penjualan:</strong></span>
+                    <span class="info-value"><strong>380 tiket - Rp 14.260.000</strong></span>
+                </div>
+            </div>
+
+            <!-- Jumlah Pengunjung Hari Ini -->
+            <div class="card">
+                <h3>Jumlah Pengunjung Hari Ini</h3>
+                <div class="info-item">
+                    <span class="info-label">Pengunjung Dewasa:</span>
+                    <span class="info-value">279 orang</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Pengunjung Anak:</span>
+                    <span class="info-value">89 orang</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Pengunjung Grup:</span>
+                    <span class="info-value">48 orang</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Pengunjung VIP:</span>
+                    <span class="info-value">45 orang</span>
+                </div>
+                <div class="info-item" style="border-top: 2px solid #f0f0f0; margin-top: 0.5rem; padding-top: 0.75rem;">
+                    <span class="info-label"><strong>Total Pengunjung:</strong></span>
+                    <span class="info-value"><strong>461 orang</strong></span>
+                </div>
+                
+                <div style="margin-top: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+                    <div class="info-item" style="border: none; padding: 0.25rem 0;">
+                        <span>Peak Hour (10:00-12:00):</span>
+                        <strong>89 pengunjung</strong>
+                    </div>
+                    <div class="info-item" style="border: none; padding: 0.25rem 0;">
+                        <span>Saat Ini (14:30):</span>
+                        <strong>23 pengunjung aktif</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Laporan Pendapatan Mingguan -->
+            <div class="card">
+                <h3>Laporan Pendapatan Mingguan</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Hari</th>
+                            <th>Pengunjung</th>
+                            <th>Pendapatan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Senin</td>
+                            <td>289 orang</td>
+                            <td>Rp 8.670.000</td>
+                        </tr>
+                        <tr>
+                            <td>Selasa</td>
+                            <td>312 orang</td>
+                            <td>Rp 9.360.000</td>
+                        </tr>
+                        <tr>
+                            <td>Rabu</td>
+                            <td>461 orang</td>
+                            <td>Rp 14.260.000</td>
+                        </tr>
+                        <tr>
+                            <td>Kamis</td>
+                            <td>-</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>Jumat</td>
+                            <td>-</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>Sabtu</td>
+                            <td>-</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>Minggu</td>
+                            <td>-</td>
+                            <td>-</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div style="margin-top: 1rem; padding: 1rem; background: #e3f2fd; border-radius: 8px;">
+                    <div class="info-item" style="border: none; padding: 0.25rem 0;">
+                        <span>Total Minggu Ini (s/d Rabu):</span>
+                        <strong>1.062 pengunjung</strong>
+                    </div>
+                    <div class="info-item" style="border: none; padding: 0.25rem 0;">
+                        <span>Total Pendapatan:</span>
+                        <strong>Rp 32.290.000</strong>
+                    </div>
+                    <div class="info-item" style="border: none; padding: 0.25rem 0;">
+                        <span>Rata-rata per hari:</span>
+                        <strong>Rp 10.763.333</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="error-message">
+            <h3>Error</h3>
+            <p>Data pengguna tidak dapat dimuat. Silakan login ulang.</p>
+            <a href="{% url 'auth:login' %}" class="logout-btn" style="margin-top: 1rem;">Login Ulang</a>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

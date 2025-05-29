@@ -64,18 +64,18 @@
   <div class="hewan-container">
     {% for hewan in hewan_list %}
     <div class="hewan-card">
-      <img src="{{ hewan.foto }}" alt="{{ hewan.nama }}">
+      <img src="{{ hewan.url_foto }}" alt="{{ hewan.nama }}">
       <p><strong>{{ hewan.nama }}</strong></p>
-      <p>Jenis: {{ hewan.jenis }}</p>
-      <p>Kondisi: {{ hewan.kondisi }}</p>
+      <p>Jenis: {{ hewan.spesies }}</p>
+      <p>Kondisi: {{ hewan.status_kesehatan }}</p>
       <p>Status Adopsi:
-        {% if hewan.diadopsi %}
+        {% if hewan.id_adopter %}
           <span style="color: green;"><strong>Diadopsi</strong></span>
         {% else %}
           <span style="color: red;"><strong>Belum Diadopsi</strong></span>
         {% endif %}
       </p>
-      {% if hewan.diadopsi %}
+      {% if hewan.id_adopter %}
         <button class="button" onclick="showDetail('{{ hewan.id }}')">Lihat Detail</button>
       {% else %}
         <button class="button" onclick="showFormAdopsi('{{ hewan.id }}')">Daftarkan Adopter</button>
@@ -85,44 +85,53 @@
   </div>
 
   {% for hewan in hewan_list %}
-  {% if hewan.diadopsi %}
-  <div id="detail-{{ hewan.id }}" class="laporan-container hidden">
-    <button class="button secondary" onclick="hideDetail('{{ hewan.id }}')">Tutup</button>
-    <h2>Detail Adopsi Hewan</h2>
-    <p><strong>Nama hewan:</strong> {{ hewan.nama }}</p>
-    <p><strong>Jenis hewan:</strong> {{ hewan.jenis }}</p>
-    <p><strong>Adopter saat ini:</strong> {{ hewan.nama_adopter }}</p>
-    <p><strong>Tanggal mulai adopsi:</strong> {{ hewan.tanggal_mulai }}</p>
-    <p><strong>Tanggal akhir adopsi:</strong> {{ hewan.tanggal_akhir }}</p>
-    <p><strong>Nominal kontribusi:</strong> Rp{{ hewan.kontribusi }}</p>
-    <p><strong>Status pembayaran:</strong>
-      <select id="status-pembayaran-{{ hewan.id }}">
-        <option value="tertunda" {% if hewan.status_pembayaran == 'tertunda' %}selected{% endif %}>Tertunda</option>
-        <option value="lunas" {% if hewan.status_pembayaran == 'lunas' %}selected{% endif %}>Lunas</option>
-      </select>
-      <button class="button" onclick="updateStatusPembayaran('{{ hewan.id }}')">Simpan Status</button>
-    </p>
-    <button class="button secondary" onclick="hentikanAdopsi('{{ hewan.id }}')">Hentikan Adopsi</button>
-  </div>
-  {% else %}
-  <div id="form-{{ hewan.id }}" class="laporan-container hidden">
-    <button class="button secondary" onclick="hideFormAdopsi('{{ hewan.id }}')">Tutup</button>
-    <h2>Pendataan Adopter</h2>
-    <form id="form-adopsi-{{ hewan.id }}" onsubmit="return submitFormAdopsi('{{ hewan.id }}');">
-      <label for="username-{{ hewan.id }}">Username calon adopter:</label>
-      <input type="text" id="username-{{ hewan.id }}" required /><br><br>
-
-      <label>Calon adopter akan mengadopsi satwa sebagai:</label><br>
-      <input type="radio" name="tipe_{{ hewan.id }}" id="tipe-individu-{{ hewan.id }}" value="individu" checked /> 
-      <label for="tipe-individu-{{ hewan.id }}">Individu</label>
-      <input type="radio" name="tipe_{{ hewan.id }}" id="tipe-organisasi-{{ hewan.id }}" value="organisasi" /> 
-      <label for="tipe-organisasi-{{ hewan.id }}">Organisasi</label><br><br>
-
-      <button type="button" class="button" onclick="verifikasiAkun('{{ hewan.id }}')">Verifikasi Akun</button>
-      <button type="button" class="button secondary" onclick="hideFormAdopsi('{{ hewan.id }}')">Batal</button>
-    </form>
-  </div>
-  {% endif %}
+    {% if hewan.id_adopter %}
+    <!-- Modal Detail Adopsi Hewan (Staff) -->
+    <div id="modal-detail-{{ hewan.id }}" class="laporan-container hidden" style="max-width:500px;margin:auto;">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <h2 style="margin:0;">Detail Adopsi Hewan</h2>
+        <a href="#" onclick="hideModalDetail('{{ hewan.id }}')" style="color:#1976d2;font-weight:bold;">[Tutup]</a>
+      </div>
+      <hr>
+      <p><strong>Nama hewan:</strong> {{ hewan.nama }}</p>
+      <p><strong>Jenis hewan:</strong> {{ hewan.spesies }}</p>
+      <p><strong>Adopter saat ini:</strong> {{ hewan.username_adopter }}</p>
+      <p><strong>Tanggal mulai adopsi:</strong> {{ hewan.tgl_mulai_adopsi }}</p>
+      <p><strong>Tanggal akhir adopsi:</strong> {{ hewan.tgl_berhenti_adopsi }}</p>
+      <p><strong>Nominal kontribusi:</strong> Rp{{ hewan.kontribusi_finansial }}</p>
+      <p><strong>Status pembayaran:</strong>
+        <select id="status-pembayaran-{{ hewan.id }}">
+          <option value="BELUM" {% if hewan.status_pembayaran == 'BELUM' %}selected{% endif %}>Tertunda</option>
+          <option value="LUNAS" {% if hewan.status_pembayaran == 'LUNAS' %}selected{% endif %}>Lunas</option>
+        </select>
+        <button class="button" onclick="updateStatusPembayaran('{{ hewan.id }}')">Simpan Status</button>
+      </p>
+      <div style="margin-top:16px;">
+        <button class="button secondary" onclick="hentikanAdopsi('{{ hewan.id }}')">Hentikan Adopsi</button>
+      </div>
+    </div>
+    {% else %}
+    <!-- Modal/Form Pendataan Adopter (Staff) -->
+    <div id="modal-form-{{ hewan.id }}" class="laporan-container hidden" style="max-width:500px;margin:auto;">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <h2 style="margin:0;">Pendataan Adopter</h2>
+        <a href="#" onclick="hideModalForm('{{ hewan.id }}')" style="color:#1976d2;font-weight:bold;">[Tutup]</a>
+      </div>
+      <hr>
+      <form id="form-adopter-{{ hewan.id }}" onsubmit="return false;">
+        <label for="username-{{ hewan.id }}">Username calon adopter:</label><br>
+        <input type="text" id="username-{{ hewan.id }}" required style="width:90%;margin-bottom:10px;"/><br>
+        <label>Calon adopter akan mengadopsi satwa sebagai:</label><br>
+        <input type="radio" name="tipe_{{ hewan.id }}" id="tipe-individu-{{ hewan.id }}" value="individu" checked /> 
+        <label for="tipe-individu-{{ hewan.id }}">Individu</label>
+        <input type="radio" name="tipe_{{ hewan.id }}" id="tipe-organisasi-{{ hewan.id }}" value="organisasi" /> 
+        <label for="tipe-organisasi-{{ hewan.id }}">Organisasi</label><br><br>
+        <button type="button" class="button" onclick="verifikasiAkun('{{ hewan.id }}')">Verifikasi Akun</button>
+        <button type="button" class="button secondary" onclick="hideModalForm('{{ hewan.id }}')">Batal</button>
+        <div id="verifikasi-error-{{ hewan.id }}" style="color:red;margin-top:8px;display:none;"></div>
+      </form>
+    </div>
+    {% endif %}
   {% endfor %}
 
   <script>
@@ -526,228 +535,114 @@
     
     // Fungsi untuk menampilkan detail hewan
     function showDetail(id) {
-      // Sembunyikan semua container yang mungkin terbuka
-      document.querySelectorAll('.laporan-container').forEach(container => {
-        container.style.display = 'none';
-        container.classList.add('hidden');
-      });
-      
-      // Tampilkan detail yang dipilih
-      const detailElement = document.getElementById('detail-' + id);
-      if (detailElement) {
-        detailElement.style.display = 'block';
-        detailElement.classList.remove('hidden');
-        
-        // Scroll ke bagian atas detail
-        detailElement.scrollIntoView({ behavior: 'smooth' });
-      } else {
-        console.error('Element dengan ID detail-' + id + ' tidak ditemukan');
-      }
+      document.querySelectorAll('.laporan-container').forEach(c => {c.style.display='none';c.classList.add('hidden');});
+      const modal = document.getElementById('modal-detail-' + id);
+      if(modal){modal.style.display='block';modal.classList.remove('hidden');modal.scrollIntoView({behavior:'smooth'});}
     }
-
-    // Fungsi untuk menyembunyikan detail hewan
-    function hideDetail(id) {
-      const detailElement = document.getElementById('detail-' + id);
-      if (detailElement) {
-        detailElement.style.display = 'none';
-        detailElement.classList.add('hidden');
-      }
+    function hideModalDetail(id) {
+      const modal = document.getElementById('modal-detail-' + id);
+      if(modal){modal.style.display='none';modal.classList.add('hidden');}
     }
-
-    // Fungsi untuk menampilkan form adopsi
     function showFormAdopsi(id) {
-      // Sembunyikan semua container yang mungkin terbuka
-      document.querySelectorAll('.laporan-container').forEach(container => {
-        container.style.display = 'none';
-        container.classList.add('hidden');
-      });
-      
-      // Tampilkan form yang dipilih
-      const formElement = document.getElementById('form-' + id);
-      if (formElement) {
-        formElement.style.display = 'block';
-        formElement.classList.remove('hidden');
-        
-        // Scroll ke bagian atas form
-        formElement.scrollIntoView({ behavior: 'smooth' });
-      } else {
-        console.error('Element dengan ID form-' + id + ' tidak ditemukan');
-      }
+      document.querySelectorAll('.laporan-container').forEach(c => {c.style.display='none';c.classList.add('hidden');});
+      const modal = document.getElementById('modal-form-' + id);
+      if(modal){modal.style.display='block';modal.classList.remove('hidden');modal.scrollIntoView({behavior:'smooth'});}
     }
-
-    // Fungsi untuk menyembunyikan form adopsi
-    function hideFormAdopsi(id) {
-      const formElement = document.getElementById('form-' + id);
-      if (formElement) {
-        formElement.style.display = 'none';
-        formElement.classList.add('hidden');
-      }
+    function hideModalForm(id) {
+      const modal = document.getElementById('modal-form-' + id);
+      if(modal){modal.style.display='none';modal.classList.add('hidden');}
     }
-
-    // Fungsi untuk verifikasi akun adopter
+    // Verifikasi akun adopter (dummy, ganti dengan AJAX/backend jika perlu)
     function verifikasiAkun(id) {
-      const username = document.getElementById('username-' + id).value;
+      const username = document.getElementById('username-' + id).value.trim();
+      const errorDiv = document.getElementById('verifikasi-error-' + id);
       if (!username) {
-        alert('Mohon isi username calon adopter!');
+        errorDiv.textContent = 'Username wajib diisi.';
+        errorDiv.style.display = 'block';
         return;
       }
-      
-      // Di sini logika untuk verifikasi akun
-      // Alih-alih alert, kita akan membuat dan menampilkan form adopsi
-      
-      // Ambil tipe adopsi yang dipilih
-      const tipeAdopsi = document.querySelector('input[name="tipe_' + id + '"]:checked').value;
-      
-      // Sembunyikan semua laporan container
-      document.querySelectorAll('.laporan-container').forEach(container => {
-        container.style.display = 'none';
-        container.classList.add('hidden');
+      fetch(`/adopsi/verifikasi/${encodeURIComponent(username)}/`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      })
+      .then(response => {
+        if (response.ok) {
+          errorDiv.style.display = 'none';
+          // Lanjutkan ke form adopsi lanjutan (atau tampilkan alert sukses)
+          alert('Akun diverifikasi. Lanjutkan ke form adopsi untuk ' + username + ' (fitur lanjutan).');
+        } else {
+          errorDiv.textContent = 'Akun dengan username tersebut tidak ditemukan atau tidak valid.';
+          errorDiv.style.display = 'block';
+        }
+      })
+      .catch(() => {
+        errorDiv.textContent = 'Terjadi kesalahan jaringan.';
+        errorDiv.style.display = 'block';
       });
-      
-      // Buat form adopsi berdasarkan tipe yang dipilih
-      createAdoptionForm(id, username, tipeAdopsi);
     }
-
-    // Fungsi untuk menampilkan dan membuat form adopsi
-    function createAdoptionForm(id, username, tipeAdopsi) {
-      // Membuat container untuk form adopsi
-      const mainContainer = document.createElement('div');
-      mainContainer.className = 'laporan-container';
-      mainContainer.id = 'form-adopsi-detail-' + id;
-      mainContainer.style.display = 'block';
-      
-      // Buat header dan content form berdasarkan tipe adopsi
-      const formTitle = document.createElement('h2');
-      formTitle.textContent = 'FORM ADOPSI SATWA';
-      formTitle.style.textAlign = 'center';
-      
-      // Ambil data hewan dari data dummy
-      const hewan = hewanData[id] || {
-        nama: 'Satwa ' + id,
-        jenis: 'Jenis belum diketahui',
-        kondisi: 'Sehat',
-        kontribusiIndividu: '500000',
-        kontribusiOrganisasi: '1000000'
-      };
-      
-      let formContent = '';
-      
-      if (tipeAdopsi === 'individu') {
-        formContent = `
-          <div style="border: 1px solid #ccc; padding: 15px; margin-bottom: 10px;">
-            <p><strong>Pihak di bawah ini,</strong></p>
-            <p>Nama: <span id="nama-adopter">${username}</span> (boleh juga dijadikan isian)</p>
-            <p>NIK: <span id="nik-adopter">[isian]</span></p>
-            <p>Alamat: <span id="alamat-adopter">[alamat di pengunjung]</span></p>
-            <p>Nomor telepon: <span id="telepon-adopter">[no_telepon di pengguna]</span></p>
-            <p>(selanjutnya disebut sebagai Adopter)</p>
-            <p>dengan ini menyatakan kepedulian dan minat untuk mengadopsi secara simbolis satwa</p>
-            <p>Nama: <span id="nama-hewan">${hewan.nama}</span></p>
-            <p>Jenis: <span id="jenis-hewan">${hewan.jenis}</span></p>
-            <p>Adopter juga bersedia memberikan kontribusi finansial kepada pihak taman safari sebagai dukungan untuk pemeliharaan satwa:</p>
-            <p>Nominal: <span id="nominal-kontribusi">Rp ${hewan.kontribusiIndividu}</span></p>
-            <p>untuk periode adopsi selama 
-              <select id="periode-adopsi">
-                <option value="3">3</option>
-                <option value="6">6</option>
-                <option value="12" selected>12</option>
-              </select> bulan.
-            </p>
-          </div>
-        `;
-      } else {
-        formContent = `
-          <div style="border: 1px solid #ccc; padding: 15px; margin-bottom: 10px;">
-            <p><strong>Pihak di bawah ini, selaku organisasi/perusahaan</strong></p>
-            <p>Nama: <span id="nama-organisasi">${username}</span></p>
-            <p>NPP: <span id="npp-organisasi">[isian]</span></p>
-            <p>Alamat: <span id="alamat-organisasi">[alamat di pengunjung]</span></p>
-            <p>Kontak: <span id="kontak-organisasi">[no_telepon di pengguna]</span></p>
-            <p>(selanjutnya disebut sebagai Adopter)</p>
-            <p>dengan ini menyatakan kepedulian dan minat untuk mengadopsi secara simbolis satwa</p>
-            <p>Nama: <span id="nama-hewan-org">${hewan.nama}</span></p>
-            <p>Jenis: <span id="jenis-hewan-org">${hewan.jenis}</span></p>
-            <p>Adopter juga bersedia memberikan kontribusi finansial kepada pihak taman safari sebagai dukungan untuk pemeliharaan satwa:</p>
-            <p>Nominal: <span id="nominal-kontribusi-org">Rp ${hewan.kontribusiOrganisasi}</span></p>
-            <p>untuk periode adopsi selama 
-              <select id="periode-adopsi-org">
-                <option value="3">3</option>
-                <option value="6">6</option>
-                <option value="12" selected>12</option>
-              </select> bulan.
-            </p>
-          </div>
-        `;
+    // Fungsi untuk mengupdate status pembayaran
+    function updateStatusPembayaran(hewanId) {
+      var select = document.getElementById('status-pembayaran-' + hewanId);
+      if (!select) return;
+      var value = select.value === 'lunas' ? 'LUNAS' : 'BELUM';
+      fetch(`/adopsi/update/${hewanId}/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'X-CSRFToken': getCSRFToken()
+        },
+        body: `status=${encodeURIComponent(value)}`
+      })
+      .then(response => {
+        if (response.ok) {
+          alert('Status pembayaran berhasil diperbarui!');
+          // Bisa reload data/tutup modal jika perlu
+        } else {
+          alert('Gagal memperbarui status pembayaran.');
+        }
+      })
+      .catch(() => alert('Terjadi kesalahan jaringan.'));
+    }
+    // Fungsi ambil CSRF token dari cookie
+    function getCSRFToken() {
+      let name = 'csrftoken=';
+      let decodedCookie = decodeURIComponent(document.cookie);
+      let ca = decodedCookie.split(';');
+      for(let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) == ' ') c = c.substring(1);
+        if (c.indexOf(name) == 0) return c.substring(name.length, c.length);
       }
-      
-      // Buat tombol submit dan batal
-      const buttonContainer = document.createElement('div');
-      buttonContainer.style.textAlign = 'center';
-      buttonContainer.innerHTML = `
-        <button class="button" onclick="submitFormAdopsi('${id}', '${tipeAdopsi}')">Submit Form</button>
-        <button class="button secondary" onclick="batalkanFormAdopsi('${id}')">Batal</button>
-      `;
-      
-      // Gabungkan semua elemen
-      mainContainer.innerHTML = `
-        <button class="button secondary" style="float: right;" onclick="batalkanFormAdopsi('${id}')">Tutup</button>
-        ${formTitle.outerHTML}
-        ${formContent}
-        ${buttonContainer.outerHTML}
-      `;
-      
-      // Tambahkan form ke dalam dokumen
-      document.body.appendChild(mainContainer);
-      
-      // Scroll ke form
-      mainContainer.scrollIntoView({ behavior: 'smooth' });
+      return '';
     }
-    
-    // Fungsi untuk membatalkan form adopsi
-    function batalkanFormAdopsi(id) {
-      const formElement = document.getElementById('form-adopsi-detail-' + id);
-      if (formElement) {
-        formElement.remove();
-      }
-    }
-    
-    // Fungsi untuk menangani submission form adopsi
-    function submitFormAdopsi(id, tipeAdopsi) {
-      // Logika untuk mengirim data adopsi ke server
-      console.log('Mengadopsi hewan ' + id + ' dengan tipe adopsi ' + tipeAdopsi);
-      
-      alert('Form adopsi berhasil disubmit!');
-      
-      // Hapus form setelah submit
-      batalkanFormAdopsi(id);
-      
-      // Refresh halaman atau update UI jika diperlukan
-      // location.reload();
-      
-      return false;
-    }
-
-    // Fungsi untuk update status pembayaran
-    function updateStatusPembayaran(id) {
-      const statusPembayaran = document.getElementById('status-pembayaran-' + id).value;
-      
-      // Logika untuk memperbarui status pembayaran
-      alert('Status pembayaran berhasil diperbarui menjadi: ' + statusPembayaran);
-    }
-
-    // Fungsi untuk menghentikan adopsi
-    function hentikanAdopsi(id) {
-      if (confirm('Apakah Anda yakin ingin menghentikan adopsi ini?')) {
-        // Logika untuk menghentikan adopsi
-        alert('Adopsi berhasil dihentikan!');
-        // Refresh halaman atau update UI
-      }
-    }
-    
     // Panggil fungsi createNavbar saat halaman dimuat
     document.addEventListener('DOMContentLoaded', function() {
       createNavbar();
     });
+    function hentikanAdopsi(hewanId) {
+  if (!confirm('Yakin ingin menghentikan adopsi hewan ini?')) return;
+  fetch(`/adopsi/delete/${hewanId}/`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'X-CSRFToken': getCSRFToken()
+    },
+    body: ''
+  })
+  .then(response => {
+    if (response.ok) {
+      alert('Adopsi berhasil dihentikan.');
+      // Bisa reload halaman atau update tampilan jika perlu
+      location.reload();
+    } else {
+      alert('Gagal menghentikan adopsi.');
+    }
+  })
+  .catch(() => alert('Terjadi kesalahan jaringan.'));
+}
   </script>
 </body>
 </html>

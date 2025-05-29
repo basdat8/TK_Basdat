@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Pilih Role - Daftar Akun</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(to right, #b8e1b5, #d4f2d2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: #ffffff;
+            padding: 2.5rem;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            max-width: 420px;
+            width: 90%;
+            text-align: center;
+        }
+
+        h2 {
+            color: #2d6a4f;
+            margin-bottom: 1.5rem;
+        }
+
+        .role-option {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .role-link {
+            padding: 1rem;
+            background-color: #95d5b2;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .role-link:hover {
+            background-color: #74c69d;
+        }
+
+        .footer-text {
+            margin-top: 1.5rem;
+            font-size: 0.85rem;
+            color: #777;
+        }
+
+        @media (max-width: 480px) {
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            .role-link {
+                font-size: 0.95rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Pilih Role untuk Registrasi</h2>
+        <div class="role-option">
+            <a class="role-link" href="{% url 'wajib:form_pengguna' %}">Pengunjung</a>
+            <a class="role-link" href="{% url 'wajib:form_dokterhewan' %}">Dokter Hewan</a>
+            <a class="role-link" href="{% url 'wajib:form_staff' %}">Staff (Penjaga / Pelatih / Admin)</a>
+        </div>
+        <div class="footer-text">
+            &copy; 2025 Sistem Manajemen Sizopi
+        </div>
+    </div>
+</body>
+</html>

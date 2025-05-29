@@ -125,43 +125,35 @@
 
 <div id="main-container" class="main-container">
     <h2 style="text-align: center; margin-top: 20px;">Hewan yang Sedang Anda Adopsi</h2>
-
     <div class="hewan-container">
         {% for hewan in hewan_list %}
         <div class="hewan-card">
-            <img src="{{ hewan.foto }}" alt="{{ hewan.nama }}">
+            <img src="{{ hewan.url_foto }}" alt="{{ hewan.nama }}">
             <p><strong>Nama Hewan:</strong> {{ hewan.nama }}</p>
-            <p><strong>Jenis Hewan:</strong> {{ hewan.jenis }}</p>
-            <p><strong>Kondisi Terbaru Hewan:</strong> {{ hewan.kondisi }}</p>
-            <button onclick="showDetail({{ hewan.id }})" class="button">Lihat Detail</button>
+            <p><strong>Spesies Hewan:</strong> {{ hewan.spesies }}</p>
+            <p><strong>Status Kesehatan Hewan:</strong> {{ hewan.status_kesehatan }}</p>
+            <button type="button" onclick="showDetail('{{ hewan.id }}')" class="button">Lihat Detail</button>
         </div>
         {% endfor %}
     </div>
 </div>
 
 {% for hewan in hewan_list %}
-<div id="detail-container-{{ hewan.id }}" class="detail-container">
-    <button onclick="hideDetail({{ hewan.id }})" class="button back-button">Kembali</button>
-
-    <h2>Informasi Hewan Adopsi</h2>
-    <img src="{{ hewan.foto }}" alt="{{ hewan.nama }}">
-
+<div id="detail-container-{{ hewan.id }}" class="detail-container" style="display:none;">
+    <button type="button" onclick="hideDetail('{{ hewan.id }}')" class="button back-button">Kembali</button>
+    <h2>Detail Hewan Adopsi</h2>
+    <img src="{{ hewan.url_foto }}" alt="{{ hewan.nama }}">
     <p><strong>Nama hewan:</strong> {{ hewan.nama }}</p>
-    <p><strong>Jenis hewan:</strong> {{ hewan.jenis }}</p>
-    <p><strong>Habitat:</strong> {{ hewan.habitat }}</p>
-    <p><strong>Tanggal mulai adopsi:</strong> {{ hewan.tanggal_mulai }}</p>
-    <p><strong>Tanggal akhir adopsi:</strong> {{ hewan.tanggal_akhir }}</p>
-
+    <p><strong>Spesies hewan:</strong> {{ hewan.spesies }}</p>
+    <p><strong>Habitat:</strong> {{ hewan.nama_habitat }}</p>
     <div style="margin-top: 20px;">
-        <button onclick="showLaporan({{ hewan.id }})" class="button">Pantau Kondisi Hewan</button>
-        <button onclick="showCertificate({{ hewan.id }})" class="button">Lihat Sertifikat Adopsi</button>
+        <button type="button" onclick="showLaporan('{{ hewan.id }}')" class="button">Pantau Kondisi Hewan</button>
+        <button type="button" onclick="showCertificate('{{ hewan.id }}')" class="button">Lihat Sertifikat Adopsi</button>
+        <button type="button" class="button secondary" onclick="confirmBerhentiAdopsi('{{ hewan.id }}')">Berhenti Adopsi</button>
+        <button type="button" class="button" onclick="toggleForm('{{ hewan.id }}')">Perpanjang Periode Adopsi</button>
     </div>
 
-    <div style="margin-top: 15px;">
-        <button class="button secondary" onclick="confirmBerhentiAdopsi('{{ hewan.id }}')">Berhenti Adopsi</button>
-        <button class="button"onclick="toggleForm({{ hewan.id }})">Perpanjang Periode Adopsi</button>
-    </div>
-   <!-- FORM PERPANJANGAN -->
+    <!-- FORM PERPANJANGAN -->
    <div id="form-perpanjang-{{ hewan.id }}" class="form-perpanjang">
     <label for="tipeAdopter-{{ hewan.id }}">Tipe Adopter:</label>
     <select id="tipeAdopter-{{ hewan.id }}" onchange="tampilkanForm('{{ hewan.id }}')">
@@ -211,14 +203,14 @@
         <h2>Sertifikat Adopsi Satwa</h2>
         <div style="border: 2px solid #4CAF50; padding: 20px; text-align: center;">
             <p><strong>Sertifikat ini diberikan kepada</strong></p>
-            <p><strong>{{hewan.nama_adopter}}</strong></p>
+            <p><strong>{{hewan.username_adopter}}</strong></p>
             <p>yang telah mengadopsi satwa</p>
             <p><strong>{{ hewan.jenis }} bernama {{ hewan.nama }}</strong></p>
-            <p>di taman safari secara simbolis dari {{ hewan.tanggal_mulai }} hingga {{ hewan.tanggal_akhir }}.</p>
+            <p>di taman safari secara simbolis dari {{ hewan.tgl_mulai_adopsi }} hingga {{ hewan.tgl_berhenti_adopsi }}.</p>
             <p>Kami sangat berterima kasih atas kepedulian dan kontribusi Anda terhadap kelestarian satwa di taman safari.</p>
         </div>
         <div style="text-align: center; margin-top: 20px;">
-            <button onclick="hideCertificate({{ hewan.id }})" class="button">Kembali</button>
+            <button onclick="hideCertificate('{{ hewan.id }}')" class="button">Kembali</button>
         </div>
     </div>
 
@@ -226,7 +218,7 @@
     <div id="laporan-kondisi-{{ hewan.id }}" class="laporan-kondisi" style="display: none;">
         <h3>Laporan Kondisi Satwa</h3>
         <p><strong>Nama:</strong> {{ hewan.nama }}</p>
-        <p><strong>Jenis:</strong> {{ hewan.jenis }}</p>
+        <p><strong>Spesies:</strong> {{ hewan.spesies }}</p>
         <p><strong>Habitat:</strong> {{ hewan.habitat }}</p>
 
         <table>
@@ -276,22 +268,8 @@
     }
 
     function hideDetail(hewanId) {
-        const detailContainer = document.getElementById('detail-container-' + hewanId);
-        detailContainer.style.display = 'none';
+        document.getElementById('detail-container-' + hewanId).style.display = 'none';
         document.getElementById('main-container').style.display = 'block';
-
-        // Sembunyikan laporan dan sertifikat saat kembali
-        const laporan = document.getElementById('laporan-kondisi-' + hewanId);
-        const sertifikat = document.getElementById('certificate-' + hewanId);
-        if (laporan) laporan.style.display = 'none';
-        if (sertifikat) sertifikat.style.display = 'none';
-
-        // Tampilkan kembali semua elemen dalam detail container
-        for (let child of detailContainer.children) {
-            if (child !== laporan && child !== sertifikat) {
-                child.style.display = 'block';
-            }
-        }
     }
 
     function showCertificate(hewanId) {
@@ -306,9 +284,10 @@
 
     function hideCertificate(hewanId) {
         document.getElementById('certificate-' + hewanId).style.display = 'none';
+        // Tampilkan kembali semua elemen di detail-container
         const detailContainer = document.getElementById('detail-container-' + hewanId);
         for (let child of detailContainer.children) {
-            if (!child.id.includes('laporan-kondisi') && !child.id.includes('certificate')) {
+            if (child.id && child.id !== 'certificate-' + hewanId) {
                 child.style.display = 'block';
             }
         }
@@ -326,10 +305,12 @@
 
     function hideLaporan(hewanId) {
         document.getElementById('laporan-kondisi-' + hewanId).style.display = 'none';
+        // Tampilkan kembali semua elemen di detail-container
         const detailContainer = document.getElementById('detail-container-' + hewanId);
         for (let child of detailContainer.children) {
-            if (!child.id.includes('laporan-kondisi') && !child.id.includes('certificate')) {
-                child.style.display = 'block';
+            // Tampilkan semua anak kecuali laporan kondisi
+            if (child.id !== 'laporan-kondisi-' + hewanId) {
+                child.style.display = '';
             }
         }
     }
@@ -352,3 +333,5 @@
             document.getElementById('formOrganisasi-' + id).style.display = tipe === 'organisasi' ? 'block' : 'none';
         }
 </script>
+</body>
+</html>
