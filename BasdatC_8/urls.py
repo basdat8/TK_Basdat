@@ -22,6 +22,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('authuser.urls')),
     path('', include('kuning.urls')),
-    path('', include('biru.urls')),
     path('adopsi/', include('adopsi.urls'))
 ]
