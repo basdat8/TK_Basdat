@@ -1,13 +1,12 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Data Satwa</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
+{% extends 'base.html' %}
+
+{% block title %}Data Satwa | Sizopi Zoo{% endblock %}
+
+{% block extra_css %}
+<style>
         body {
             font-family: sans-serif;
             background-color: #f4fdf5;
-            margin: 20px;
         }
         h2 {
             color: #2e7d32;
@@ -70,17 +69,19 @@
             max-width: 100%;
             max-height: 100%;
             object-fit: cover;
-        }
-        .foto-placeholder {
+        }        .foto-placeholder {
             font-size: 14px;
             color: #4caf50;
         }
     </style>
-</head>
-<body>
+{% endblock %}
 
-<h2>Data Satwa</h2>
-<a href="{% url 'tambah_hewan' %}" class="tambah-btn"><i class="fa fa-plus"></i> Tambah Satwa</a>
+{% block content %}
+<div class="container">
+    <h2>Data Satwa</h2>
+      {% if request.session.user_role != 'pengunjung' and request.session.user_role %}
+        <a href="{% url 'tambah_hewan' %}" class="tambah-btn"><i class="fa fa-plus"></i> Tambah Satwa</a>
+    {% endif %}
 
 <div class="grid-container">
     {% for h in data %}
@@ -96,16 +97,14 @@
         <div class="hewan-info"><i class="fa fa-dna"></i> Spesies: {{ h.spesies }}</div>
         <div class="hewan-info"><i class="fa fa-map-marker-alt"></i> Asal: {{ h.asal_hewan }}</div>
         <div class="hewan-info"><i class="fa fa-calendar"></i> Lahir: {{ h.tanggal_lahir }}</div>
-        <div class="hewan-info"><i class="fa fa-heartbeat"></i> Kesehatan: {{ h.status_kesehatan }}</div>
-        <div class="hewan-info"><i class="fa fa-tree"></i> Habitat: {{ h.nama_habitat }}</div>
-
-        <div class="aksi">
-            <a href="{% url 'edit_hewan' h.id %}"><i class="fa fa-edit"></i> Edit</a>
-            <a href="{% url 'hapus_hewan' h.id %}"><i class="fa fa-trash"></i> Hapus</a>
-        </div>
+        <div class="hewan-info"><i class="fa fa-heartbeat"></i> Kesehatan: {{ h.status_kesehatan }}</div>        <div class="hewan-info"><i class="fa fa-tree"></i> Habitat: {{ h.nama_habitat }}</div>        {% if request.session.user_role != 'pengunjung' and request.session.user_role %}
+            <div class="aksi">
+                <a href="{% url 'edit_hewan' h.id %}"><i class="fa fa-edit"></i> Edit</a>
+                <a href="{% url 'hapus_hewan' h.id %}"><i class="fa fa-trash"></i> Hapus</a>
+            </div>
+        {% endif %}
     </div>
     {% endfor %}
 </div>
-
-</body>
-</html>
+</div>
+{% endblock %}

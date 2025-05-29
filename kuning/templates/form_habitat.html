@@ -1,26 +1,27 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Form Habitat</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
+{% extends 'base.html' %}
+
+{% block title %}Form Habitat | Sizopi Zoo{% endblock %}
+
+{% block extra_css %}
+<style>
         body {
             font-family: sans-serif;
             background-color: #f4fdf5;
-            margin: 30px;
+            padding: 0;
+            margin: 0;
         }
         h2 {
             text-align: center;
             color: #2e7d32;
             margin-bottom: 20px;
-        }
-        form {
+        }        form {
             background-color: #e8f5e9;
             max-width: 600px;
             margin: 0 auto;
             padding: 24px;
             border-radius: 12px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-top: 20px;
         }
         label {
             font-weight: bold;
@@ -35,13 +36,25 @@
             border: 1px solid #c8e6c9;
             border-radius: 6px;
             font-size: 15px;
-        }
-        textarea {
+        }        textarea {
             resize: vertical;
             height: 80px;
         }
+        input[readonly] {
+            background-color: #f5f5f5 !important;
+            color: #666 !important;
+            cursor: not-allowed;
+        }
+        small {
+            color: #666;
+            font-style: italic;
+            font-size: 12px;
+            display: block;
+            margin-bottom: 16px;
+        }
         .btn-group {
             text-align: center;
+            margin-top: 20px;
         }
         .btn-submit {
             background-color: #66bb6a;
@@ -63,39 +76,48 @@
             font-weight: bold;
             font-size: 14px;
             text-decoration: none;
-        }
-        .btn-submit:hover {
+        }        .btn-submit:hover {
             background-color: #4caf50;
         }
         .btn-cancel:hover {
             background-color: #a5d6a7;
         }
-    </style>
-</head>
-<body>
+</style>
+{% endblock %}
 
-<h2><i class="fa fa-leaf"></i> Form Tambah/Edit Habitat</h2>
-
-<form method="post">
-    {% csrf_token %}
+{% block content %}
+<div class="container">
+    <h2><i class="fa fa-leaf"></i> Form Tambah/Edit Habitat</h2>
     
-    <label for="nama">Nama Habitat:</label>
-    <input type="text" id="nama" name="nama" value="{{ data.nama|default:'' }}" required>
+    <form method="post">
+        {% csrf_token %}
+        
+        <label for="nama">Nama Habitat:</label>
+        {% if data.nama %}
+            <input type="text" id="nama" name="nama" value="{{ data.nama }}" readonly style="background-color: #f5f5f5; color: #666;">
+            <small style="color: #666; font-style: italic; display: block; margin-bottom: 16px;">Nama habitat tidak dapat diubah setelah dibuat</small>
+        {% else %}
+            <input type="text" id="nama" name="nama" value="{{ data.nama|default:'' }}" required>
+        {% endif %}
 
-    <label for="luas_area">Luas Area (m²):</label>
-    <input type="number" id="luas_area" name="luas_area" value="{{ data.luas_area|default:'' }}" required>
+        <label for="luas_area">Luas Area (m²):</label>
+        <input type="number" id="luas_area" name="luas_area" value="{{ data.luas_area|default:'' }}" step="0.01" required>
 
-    <label for="kapasitas">Kapasitas Maksimal:</label>
-    <input type="number" id="kapasitas" name="kapasitas" value="{{ data.kapasitas|default:'' }}" required>
+        <label for="kapasitas">Kapasitas Maksimal:</label>
+        <input type="number" id="kapasitas" name="kapasitas" value="{{ data.kapasitas|default:'' }}" min="1" required>
 
-    <label for="status">Status Lingkungan:</label>
-    <textarea id="status" name="status" required>{{ data.status|default:'' }}</textarea>
-
-    <div class="btn-group">
-        <button type="submit" class="btn-submit"><i class="fa fa-save"></i> Simpan Perubahan</button>
-        <a href="{% url 'list_habitat' %}" class="btn-cancel"><i class="fa fa-times"></i> Batal</a>
-    </div>
-</form>
-
-</body>
-</html>
+        <label for="status">Status Lingkungan:</label>
+        <textarea id="status" name="status" required>{{ data.status|default:'' }}</textarea>
+        
+        <div class="btn-group">
+            <button type="submit" class="btn-submit">
+                <i class="fa fa-save"></i> 
+                {% if data.nama %}Simpan Perubahan{% else %}Tambah Habitat{% endif %}
+            </button>
+            <a href="{% url 'list_habitat' %}" class="btn-cancel">
+                <i class="fa fa-times"></i> Batal
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

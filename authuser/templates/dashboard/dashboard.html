@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Sizopi Zoo{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="display-4 mb-4">Dashboard</h1>
+            <div class="alert alert-success">
+                <h4 class="alert-heading">Selamat Datang!</h4>
+                <p>Anda telah berhasil masuk ke sistem manajemen Kebun Binatang Sizopi.</p>
+                <hr>
+                <p class="mb-0">Silakan gunakan menu di navbar untuk mengakses fitur sesuai peran Anda.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-user-circle fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">Profil Anda</h5>
+                    <p class="card-text">Kelola informasi pribadi dan pengaturan akun Anda.</p>
+                    <a href="#" class="btn btn-outline-primary">Lihat Profil</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-tasks fa-3x text-success mb-3"></i>
+                    <h5 class="card-title">Aktivitas Terakhir</h5>
+                    <p class="card-text">Lihat aktivitas terbaru yang telah Anda lakukan di sistem.</p>
+                    <a href="#" class="btn btn-outline-success">Lihat Aktivitas</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-bell fa-3x text-danger mb-3"></i>
+                    <h5 class="card-title">Notifikasi</h5>
+                    <p class="card-text">Anda memiliki 3 notifikasi yang belum dibaca.</p>
+                    <a href="#" class="btn btn-outline-danger">Lihat Notifikasi</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Any dashboard-specific JavaScript can go here
+    console.log('Dashboard loaded successfully');
+</script>
+{% endblock %}

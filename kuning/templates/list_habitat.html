@@ -1,13 +1,12 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Daftar Habitat</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
+{% extends 'base.html' %}
+
+{% block title %}Daftar Habitat | Sizopi Zoo{% endblock %}
+
+{% block extra_css %}
+<style>
         body {
             font-family: sans-serif;
             background-color: #f4fdf5;
-            margin: 20px;
         }
         h2 {
             color: #2e7d32;
@@ -53,18 +52,20 @@
             margin-top: 12px;
         }
         .aksi a {
-            margin-right: 10px;
-            text-decoration: none;
+            margin-right: 10px;            text-decoration: none;
             color: #2e7d32;
             font-weight: bold;
         }
     </style>
-</head>
-<body>
+{% endblock %}
 
-<h2>Daftar Habitat</h2>
+{% block content %}
+<div class="container">
+    <h2>Daftar Habitat</h2>
 <div class="tambah-container">
-    <a href="{% url 'tambah_habitat' %}" class="tambah-btn"><i class="fa fa-plus"></i> Tambah Habitat</a>
+    {% if request.session.user_role != 'pengunjung' and request.session.user_role %}
+        <a href="{% url 'tambah_habitat' %}" class="tambah-btn"><i class="fa fa-plus"></i> Tambah Habitat</a>
+    {% endif %}
 </div>
 
 <div class="grid-container">
@@ -74,15 +75,14 @@
         <div class="habitat-info"><i class="fa fa-expand-arrows-alt"></i> Luas Area: {{ h.luas_area }} m²</div>
         <div class="habitat-info"><i class="fa fa-users"></i> Kapasitas: {{ h.kapasitas }}</div>
         <div class="habitat-info"><i class="fa fa-leaf"></i> Status Lingkungan: {{ h.status }}</div>
-        
-        <div class="aksi">
+          <div class="aksi">
             <a href="{% url 'detail_habitat' h.nama %}"><i class="fa fa-eye"></i> Detail</a>
-            <a href="{% url 'edit_habitat' h.nama %}"><i class="fa fa-edit"></i> Edit</a>
-            <a href="{% url 'hapus_habitat' h.nama %}"><i class="fa fa-trash"></i> Hapus</a>
+            {% if request.session.user_role != 'pengunjung' and request.session.user_role %}
+                <a href="{% url 'edit_habitat' h.nama %}"><i class="fa fa-edit"></i> Edit</a>
+                <a href="{% url 'hapus_habitat' h.nama %}"><i class="fa fa-trash"></i> Hapus</a>
+            {% endif %}
         </div>
-    </div>
-    {% endfor %}
+    </div>    {% endfor %}
 </div>
-
-</body>
-</html>
+</div>
+{% endblock %}

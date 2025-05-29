@@ -1,216 +1,208 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Sizopi</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+{% extends 'base.html' %}
 
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #b8e1b5 0%, #d4f2d2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
+{% block title %}Login - Sizopi{% endblock %}
 
-        .login-container {
-            background: white;
-            padding: 2.5rem;
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
-            position: relative;
-            overflow: hidden;
-        }
+{% block extra_css %}
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
-        .login-container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 5px;
-            background: linear-gradient(90deg, #95d5b2, #74c69d);
-        }
+    .login-container {
+        background: white;
+        padding: 2.5rem;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 400px;
+        position: relative;
+        overflow: hidden;
+        margin: 3rem auto;
+    }
 
-        .login-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
+    .login-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(90deg, #95d5b2, #74c69d);
+    }
 
-        .login-title {
-            color: #2d6a4f;
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
+    .login-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
 
-        .login-subtitle {
-            color: #555;
-            font-size: 0.95rem;
-        }
+    .login-title {
+        color: #2d6a4f;
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
 
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
+    .login-subtitle {
+        color: #555;
+        font-size: 0.95rem;
+    }
 
-        .form-label {
-            display: block;
-            color: #333;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
 
-        .form-input {
-            width: 100%;
-            padding: 1rem;
-            border: 2px solid #cce3d2;
-            border-radius: 10px;
-            font-size: 1rem;
-            background: #f8fff8;
-        }
+    .form-label {
+        display: block;
+        color: #333;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
 
-        .form-input:focus {
-            outline: none;
-            border-color: #74c69d;
-            background: white;
-            box-shadow: 0 0 0 3px rgba(116, 198, 157, 0.2);
-        }
+    .form-input {
+        width: 100%;
+        padding: 1rem;
+        border: 2px solid #cce3d2;
+        border-radius: 10px;
+        font-size: 1rem;
+        background: #f8fff8;
+    }
 
-        .login-button {
-            width: 100%;
-            padding: 1rem;
-            background: linear-gradient(135deg, #74c69d 0%, #52b788 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
+    .form-input:focus {
+        outline: none;
+        border-color: #74c69d;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(116, 198, 157, 0.2);
+    }
 
-        .login-button:hover {
-            background: #40916c;
-        }
+    .login-button {
+        width: 100%;
+        padding: 1rem;
+        background: linear-gradient(135deg, #74c69d 0%, #52b788 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
 
-        .alert {
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            font-size: 0.9rem;
-        }
+    .login-button:hover {
+        background: #40916c;
+    }
 
-        .alert-error {
-            background-color: #f8d7da;
-            border: 1px solid #f5c6cb;
-            color: #721c24;
-        }
+    .alert {
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+    }
 
-        .alert-success {
-            background-color: #d4edda;
-            border: 1px solid #c3e6cb;
-            color: #155724;
-        }
+    .alert-error {
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
+    }
 
-        .footer-text {
-            text-align: center;
-            margin-top: 1.5rem;
-            font-size: 0.85rem;
-            color: #555;
-        }
+    .alert-success {
+        background-color: #d4edda;
+        border: 1px solid #c3e6cb;
+        color: #155724;
+    }
 
-        .register-link {
-            margin-top: 1.2rem;
-            text-align: center;
-        }
+    .footer-text {
+        text-align: center;
+        margin-top: 1.5rem;
+        font-size: 0.85rem;
+        color: #555;
+    }
 
-        .register-link a {
-            color: #2d6a4f;
-            text-decoration: none;
-            font-weight: 600;
-        }
+    .register-link {
+        margin-top: 1.2rem;
+        text-align: center;
+    }
 
-        .register-link a:hover {
-            text-decoration: underline;
-        }
+    .register-link a {
+        color: #2d6a4f;
+        text-decoration: none;
+        font-weight: 600;
+    }
 
-        .spinner {
-            display: none;
-            margin: 1rem auto;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #74c69d;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-        }
+    .register-link a:hover {
+        text-decoration: underline;
+    }
 
-        .spinner.show {
-            display: block;
-        }
+    .spinner {
+        display: none;
+        margin: 1rem auto;
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid #74c69d;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        animation: spin 1s linear infinite;
+    }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-    </style>
-</head>
-<body>
-    <div class="login-container">
-        <div class="login-header">
-            <h1 class="login-title">Selamat Datang</h1>
-            <p class="login-subtitle">Masuk ke sistem Sizopi</p>
-        </div>
+    .spinner.show {
+        display: block;
+    }
 
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }}">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+</style>
+{% endblock %}
 
-        <form method="post" action="{% url 'wajib:login' %}">
-            {% csrf_token %}
-            <div class="form-group">
-                <label class="form-label" for="email">Email</label>
-                <input class="form-input" type="email" id="email" name="email" placeholder="Masukkan email" required>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label" for="password">Password</label>
-                <input class="form-input" type="password" id="password" name="password" placeholder="Masukkan password" required>
-            </div>
-
-            <button type="submit" class="login-button">Masuk</button>
-            <div class="spinner" id="spinner"></div>
-        </form>
-
-        <div class="register-link">
-            <p>Belum punya akun? <a href="{% url 'wajib:pilih_role' %}">Register di sini</a></p>
-        </div>
-
-        <div class="footer-text">
-            <p>Sistem Manajemen Kebun Binatang Sizopi &copy; 2025</p>
-        </div>
+{% block content %}
+<div class="login-container">
+    <div class="login-header">
+        <h1 class="login-title">Selamat Datang</h1>
+        <p class="login-subtitle">Masuk ke sistem Sizopi</p>
     </div>
 
-    <script>
-        const form = document.querySelector('form');
-        const spinner = document.getElementById('spinner');
-        form.addEventListener('submit', () => {
-            spinner.classList.add('show');
-        });
-    </script>
-</body>
-</html>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="post" action="{% url 'wajib:login' %}">
+        {% csrf_token %}
+        <div class="form-group">
+            <label class="form-label" for="email">Email</label>
+            <input class="form-input" type="email" id="email" name="email" placeholder="Masukkan email" required>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="password">Password</label>
+            <input class="form-input" type="password" id="password" name="password" placeholder="Masukkan password" required>
+        </div>
+
+        <button type="submit" class="login-button">Masuk</button>
+        <div class="spinner" id="spinner"></div>
+    </form>
+
+    <div class="register-link">
+        <p>Belum punya akun? <a href="{% url 'wajib:pilih_role' %}">Register di sini</a></p>
+    </div>
+
+    <div class="footer-text">
+        <p>Sistem Manajemen Kebun Binatang Sizopi &copy; 2025</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const form = document.querySelector('form');
+    const spinner = document.getElementById('spinner');
+    form.addEventListener('submit', () => {
+        spinner.classList.add('show');
+    });
+</script>
+{% endblock %}

@@ -1,13 +1,12 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Detail Habitat</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
+{% extends 'base.html' %}
+
+{% block title %}Detail Habitat | Sizopi Zoo{% endblock %}
+
+{% block extra_css %}
+<style>
         body {
             font-family: sans-serif;
             background-color: #f4fdf5;
-            margin: 30px;
         }
         .judul {
             text-align: center;
@@ -55,18 +54,18 @@
         .aksi-link {
             text-align: center;
             margin-top: 20px;
-        }
-        .aksi-link a {
+        }        .aksi-link a {
             text-decoration: none;
             color: #2e7d32;
             font-weight: bold;
             margin: 0 12px;
         }
-    </style>
-</head>
-<body>
+</style>
+{% endblock %}
 
-<h2 class="judul"><i class="fa fa-tree"></i> DETAIL HABITAT: {{ habitat.nama }}</h2>
+{% block content %}
+<div class="container">
+    <h2 class="judul"><i class="fa fa-tree"></i> DETAIL HABITAT: {{ habitat.nama }}</h2>
 
 <div class="habitat-info">
     <p><i class="fa fa-expand-arrows-alt"></i> Luas Area: {{ habitat.luas_area }} m²</p>
@@ -103,6 +102,5 @@
     <a href="{% url 'hapus_habitat' habitat.nama %}"><i class="fa fa-trash"></i> Hapus Habitat</a>
     <a href="{% url 'list_habitat' %}"><i class="fa fa-arrow-left"></i> Kembali</a>
 </div>
-
-</body>
-</html>
+</div>
+{% endblock %}
