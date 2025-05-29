@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Veterinary System</title>
+    <title>Login - Sizopi</title>
     <style>
         * {
             margin: 0;
@@ -12,8 +12,8 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #b8e1b5 0%, #d4f2d2 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -39,7 +39,7 @@
             left: 0;
             right: 0;
             height: 5px;
-            background: linear-gradient(90deg, #667eea, #764ba2);
+            background: linear-gradient(90deg, #95d5b2, #74c69d);
         }
 
         .login-header {
@@ -48,55 +48,48 @@
         }
 
         .login-title {
-            color: #333;
+            color: #2d6a4f;
             font-size: 2rem;
             font-weight: 700;
             margin-bottom: 0.5rem;
         }
 
         .login-subtitle {
-            color: #666;
+            color: #555;
             font-size: 0.95rem;
         }
 
         .form-group {
             margin-bottom: 1.5rem;
-            position: relative;
         }
 
         .form-label {
             display: block;
-            color: #555;
+            color: #333;
             font-weight: 600;
             margin-bottom: 0.5rem;
-            font-size: 0.9rem;
         }
 
         .form-input {
             width: 100%;
             padding: 1rem;
-            border: 2px solid #e1e5e9;
+            border: 2px solid #cce3d2;
             border-radius: 10px;
             font-size: 1rem;
-            transition: all 0.3s ease;
-            background: #f8f9fa;
+            background: #f8fff8;
         }
 
         .form-input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #74c69d;
             background: white;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .form-input::placeholder {
-            color: #aaa;
+            box-shadow: 0 0 0 3px rgba(116, 198, 157, 0.2);
         }
 
         .login-button {
             width: 100%;
             padding: 1rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #74c69d 0%, #52b788 100%);
             color: white;
             border: none;
             border-radius: 10px;
@@ -104,16 +97,10 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            margin-top: 1rem;
         }
 
         .login-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .login-button:active {
-            transform: translateY(0);
+            background: #40916c;
         }
 
         .alert {
@@ -137,62 +124,39 @@
 
         .footer-text {
             text-align: center;
-            margin-top: 2rem;
-            color: #666;
+            margin-top: 1.5rem;
             font-size: 0.85rem;
+            color: #555;
         }
 
-        .icon-input {
-            position: relative;
-        }
-
-        .icon-input::before {
-            content: '👤';
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 1.2rem;
-            z-index: 1;
-        }
-
-        .icon-input.password::before {
-            content: '🔒';
-        }
-
-        .icon-input .form-input {
-            padding-left: 3rem;
-        }
-
-        @media (max-width: 480px) {
-            .login-container {
-                padding: 2rem;
-                margin: 10px;
-            }
-
-            .login-title {
-                font-size: 1.7rem;
-            }
-        }
-
-        .loading {
-            display: none;
+        .register-link {
+            margin-top: 1.2rem;
             text-align: center;
-            margin-top: 1rem;
         }
 
-        .loading.show {
-            display: block;
+        .register-link a {
+            color: #2d6a4f;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
         }
 
         .spinner {
+            display: none;
+            margin: 1rem auto;
             border: 3px solid #f3f3f3;
-            border-top: 3px solid #667eea;
+            border-top: 3px solid #74c69d;
             border-radius: 50%;
             width: 30px;
             height: 30px;
             animation: spin 1s linear infinite;
-            margin: 0 auto;
+        }
+
+        .spinner.show {
+            display: block;
         }
 
         @keyframes spin {
@@ -205,10 +169,9 @@
     <div class="login-container">
         <div class="login-header">
             <h1 class="login-title">Selamat Datang</h1>
-            <p class="login-subtitle">Silakan masuk ke sistem Sizopi</p>
+            <p class="login-subtitle">Masuk ke sistem Sizopi</p>
         </div>
 
-        <!-- Display Django messages -->
         {% if messages %}
             {% for message in messages %}
                 <div class="alert alert-{{ message.tags }}">
@@ -217,74 +180,36 @@
             {% endfor %}
         {% endif %}
 
-        <form method="post" action="{% url 'wajib:login' %}" id="loginForm">
+        <form method="post" action="{% url 'wajib:login' %}">
             {% csrf_token %}
-            
             <div class="form-group">
-                <label for="email" class="form-label">Email</label>
-                <div class="icon-input">
-                    <input 
-                        type="email" 
-                        id="email" 
-                        name="email" 
-                        class="form-input" 
-                        placeholder="Masukkan email Anda"
-                        required
-                        autocomplete="email"
-                    >
-                </div>
+                <label class="form-label" for="email">Email</label>
+                <input class="form-input" type="email" id="email" name="email" placeholder="Masukkan email" required>
             </div>
 
             <div class="form-group">
-                <label for="password" class="form-label">Password</label>
-                <div class="icon-input password">
-                    <input 
-                        type="password" 
-                        id="password" 
-                        name="password" 
-                        class="form-input" 
-                        placeholder="Masukkan password Anda"
-                        required
-                        autocomplete="current-password"
-                    >
-                </div>
+                <label class="form-label" for="password">Password</label>
+                <input class="form-input" type="password" id="password" name="password" placeholder="Masukkan password" required>
             </div>
 
-            <button type="submit" class="login-button" id="loginBtn">
-                Masuk
-            </button>
-
-            <div class="loading" id="loading">
-                <div class="spinner"></div>
-                <p>Memproses login...</p>
-            </div>
+            <button type="submit" class="login-button">Masuk</button>
+            <div class="spinner" id="spinner"></div>
         </form>
 
+        <div class="register-link">
+            <p>Belum punya akun? <a href="{% url 'wajib:pilih_role' %}">Register di sini</a></p>
+        </div>
+
         <div class="footer-text">
-            <p>Sistem Manajemen Sizopi &copy; 2025</p>
+            <p>Sistem Manajemen Kebun Binatang Sizopi &copy; 2025</p>
         </div>
     </div>
 
     <script>
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            const loginBtn = document.getElementById('loginBtn');
-            const loading = document.getElementById('loading');
-            
-            // Show loading state
-            loginBtn.style.display = 'none';
-            loading.classList.add('show');
-        });
-
-        // Auto-focus on email field when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('email').focus();
-        });
-
-        // Add enter key support
-        document.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                document.getElementById('loginForm').submit();
-            }
+        const form = document.querySelector('form');
+        const spinner = document.getElementById('spinner');
+        form.addEventListener('submit', () => {
+            spinner.classList.add('show');
         });
     </script>
 </body>

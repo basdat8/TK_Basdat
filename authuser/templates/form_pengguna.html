@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrasi Pengunjung</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #d4edda, #c8e6c9);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #4b7942;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 6px;
+            color: #2e4f2e;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1.5px solid #b5cd7c;
+            border-radius: 6px;
+            font-size: 16px;
+            background: #f8fff5;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #90cb81;
+            background: #ffffff;
+            box-shadow: 0 0 5px rgba(144, 203, 129, 0.5);
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #90cb81;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background-color: #7ab56d;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .back-link a {
+            color: #4b7942;
+            text-decoration: none;
+        }
+
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Form Registrasi Pengunjung</h2>
+        <form method="post" action="{% url 'wajib:form_pengguna' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" name="username" id="username" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" name="email" id="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" name="password" id="password" required>
+            </div>
+
+            <div class="form-group">
+                <label for="confirm_password">Konfirmasi Password</label>
+                <input type="password" name="confirm_password" id="confirm_password" required>
+            </div>
+
+            <div class="form-group">
+                <label for="nama_depan">Nama Depan</label>
+                <input type="text" name="nama_depan" id="nama_depan" required>
+            </div>
+
+            <div class="form-group">
+                <label for="nama_tengah">Nama Tengah (Opsional)</label>
+                <input type="text" name="nama_tengah" id="nama_tengah">
+            </div>
+
+            <div class="form-group">
+                <label for="nama_belakang">Nama Belakang</label>
+                <input type="text" name="nama_belakang" id="nama_belakang" required>
+            </div>
+
+            <div class="form-group">
+                <label for="no_telepon">No Telepon</label>
+                <input type="text" name="no_telepon" id="no_telepon" required>
+            </div>
+
+            <div class="form-group">
+                <label for="alamat">Alamat Lengkap</label>
+                <input type="text" name="alamat" id="alamat" required>
+            </div>
+
+            <div class="form-group">
+                <label for="tanggal_lahir">Tanggal Lahir</label>
+                <input type="date" name="tanggal_lahir" id="tanggal_lahir" required>
+            </div>
+
+            <button type="submit">Daftar</button>
+        </form>
+
+        <div class="back-link">
+            <p>Sudah punya akun? <a href="{% url 'wajib:login' %}">Login di sini</a></p>
+        </div>
+    </div>
+</body>
+</html>
