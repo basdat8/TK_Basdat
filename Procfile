@@ -1,0 +1,1 @@
+web: gunicorn BasdatC_8.wsgi --log-file -

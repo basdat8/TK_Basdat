@@ -1,13 +1,12 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Form Satwa</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
+{% extends 'base.html' %}
+
+{% block title %}Form Satwa | Sizopi Zoo{% endblock %}
+
+{% block extra_css %}
+<style>
         body {
             font-family: sans-serif;
             background-color: #f4fdf5;
-            margin: 30px;
         }
         h2 {
             text-align: center;
@@ -75,15 +74,15 @@
         }
         .btn-submit:hover {
             background-color: #4caf50;
-        }
-        .btn-cancel:hover {
+        }        .btn-cancel:hover {
             background-color: #a5d6a7;
         }
     </style>
-</head>
-<body>
+{% endblock %}
 
-<h2><i class="fa fa-paw"></i> Form Tambah/Edit Satwa</h2>
+{% block content %}
+<div class="container">
+    <h2><i class="fa fa-paw"></i> Form Tambah/Edit Satwa</h2>
 
 {% if messages %}
     <ul class="message-box">
@@ -127,9 +126,7 @@
 
     <div class="btn-group">
         <button type="submit" class="btn-submit"><i class="fa fa-save"></i> Simpan</button>
-        <a href="{% url 'list_hewan' %}" class="btn-cancel"><i class="fa fa-times"></i> Batal</a>
-    </div>
+        <a href="{% url 'list_hewan' %}" class="btn-cancel"><i class="fa fa-times"></i> Batal</a>    </div>
 </form>
-
-</body>
-</html>
+</div>
+{% endblock %}

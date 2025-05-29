@@ -1,0 +1,321 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard Staf Pelatih Pertunjukan - Sizopi{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-header {
+        background: linear-gradient(135deg, #90cb81 0%, #52b788 100%);
+        padding: 2rem;
+        border-radius: 10px;
+        color: white;
+        margin-bottom: 2rem;
+    }
+
+    .dashboard-title {
+        font-size: 1.8rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+    
+    .stats-card {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        height: 100%;
+    }
+    
+    .stats-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #888;
+        margin-bottom: 1rem;
+    }
+    
+    .stats-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #2d6a4f;
+        margin-bottom: 0.5rem;
+    }
+    
+    .stats-subtitle {
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+    
+    .schedule-table, .animal-table, .training-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 1rem;
+    }
+    
+    .schedule-table th, .animal-table th, .training-table th {
+        background-color: #f8f9fa;
+        text-align: left;
+        padding: 12px;
+        font-weight: 600;
+        color: #495057;
+        border-bottom: 2px solid #dee2e6;
+    }
+    
+    .schedule-table td, .animal-table td, .training-table td {
+        padding: 12px;
+        border-bottom: 1px solid #dee2e6;
+    }
+    
+    .schedule-table tr:hover, .animal-table tr:hover, .training-table tr:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .badge-scheduled {
+        background-color: #007bff;
+        color: white;
+        padding: 5px 8px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+    }
+    
+    .badge-ready {
+        background-color: #28a745;
+        color: white;
+        padding: 5px 8px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+    }
+    
+    .badge-care {
+        background-color: #ffc107;
+        color: #212529;
+        padding: 5px 8px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+    }
+    
+    .badge-success {
+        background-color: #28a745;
+        color: white;
+        padding: 5px 8px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+    }
+    
+    .badge-training {
+        background-color: #fd7e14;
+        color: white;
+        padding: 5px 8px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+    }
+    
+    .profile-info {
+        background: linear-gradient(135deg, #eff7ee 0%, #d8f3dc 100%);
+        padding: 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+    }
+    
+    .profile-name {
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: #2d6a4f;
+        margin-bottom: 0.5rem;
+    }
+    
+    .profile-role {
+        font-size: 0.9rem;
+        color: #74c69d;
+        margin-bottom: 1rem;
+    }
+    
+    .profile-details {
+        font-size: 0.9rem;
+        color: #495057;
+        margin-bottom: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <div class="container">
+        <div class="dashboard-title">Dashboard Staf Pelatih Pertunjukan</div>
+        <p class="mb-0">Selamat datang di Sistem Manajemen Sizopi Zoo</p>
+    </div>
+</div>
+
+<div class="container">
+    <!-- User Profile Information -->
+    <div class="profile-info mb-4">
+        <div class="row">
+            <div class="col-md-2 text-center">
+                <i class="fas fa-user-circle fa-5x text-success mb-2"></i>
+            </div>
+            <div class="col-md-10">
+                <div class="profile-name">{{ user_data.nama_lengkap }}</div>
+                <div class="profile-role">Pelatih Hewan | ID Staff: {{ user_data.id_staf }}</div>
+                <div class="profile-details"><i class="fas fa-envelope me-2"></i>{{ user_data.email }}</div>
+                <div class="profile-details"><i class="fas fa-phone me-2"></i>{{ user_data.no_telepon }}</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Show Schedule -->
+    <div class="row mb-4">
+        <div class="col">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">Jadwal Pertunjukan - Hari Ini</h5>
+                </div>
+                <div class="card-body">
+                    {% if jadwal_pertunjukan %}
+                    <div class="table-responsive">
+                        <table class="schedule-table">
+                            <thead>
+                                <tr>
+                                    <th>Waktu</th>
+                                    <th>Nama Atraksi</th>
+                                    <th>Lokasi</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for show in jadwal_pertunjukan %}
+                                <tr>
+                                    <td>{{ show.waktu }}</td>
+                                    <td>{{ show.nama_atraksi }}</td>
+                                    <td>{{ show.lokasi }}</td>
+                                    <td><span class="badge-scheduled">{{ show.status }}</span></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        Tidak ada jadwal pertunjukan untuk hari ini.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Animal List and Training Status -->
+    <div class="row mb-4">
+        <div class="col-md-6 mb-3">
+            <div class="card h-100">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">Daftar Hewan Pertunjukan</h5>
+                </div>
+                <div class="card-body">
+                    {% if daftar_hewan %}
+                    <div class="table-responsive">
+                        <table class="animal-table">
+                            <thead>
+                                <tr>
+                                    <th>Nama</th>
+                                    <th>Spesies</th>
+                                    <th>Umur</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for animal in daftar_hewan %}
+                                <tr>
+                                    <td>{{ animal.nama }}</td>
+                                    <td>{{ animal.spesies }}</td>
+                                    <td>{{ animal.umur }}</td>
+                                    <td>
+                                        {% if animal.status == 'Siap Show' %}
+                                            <span class="badge-ready">{{ animal.status }}</span>
+                                        {% else %}
+                                            <span class="badge-care">{{ animal.status }}</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        Tidak ada hewan yang ditugaskan untuk pertunjukan.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 mb-3">
+            <div class="card h-100">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">Status Latihan</h5>
+                </div>
+                <div class="card-body">
+                    {% if status_latihan %}
+                    <div class="table-responsive">
+                        <table class="training-table">
+                            <thead>
+                                <tr>
+                                    <th>Hewan</th>
+                                    <th>Aktivitas</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for training in status_latihan %}
+                                <tr>
+                                    <td>{{ training.nama_hewan }}</td>
+                                    <td>{{ training.aktivitas }}</td>
+                                    <td>
+                                        {% if training.status == 'Berhasil' %}
+                                            <span class="badge-success">{{ training.status }}</span>
+                                        {% else %}
+                                            <span class="badge-training">{{ training.status }}</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        Tidak ada aktivitas latihan terbaru.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Access -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">Akses Cepat</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-6 mb-3">
+                            <a href="#" class="btn btn-outline-success btn-lg w-100">
+                                <i class="fas fa-calendar-alt mb-2 d-block fa-2x"></i>
+                                Kelola Jadwal Pertunjukan
+                            </a>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <a href="#" class="btn btn-outline-success btn-lg w-100">
+                                <i class="fas fa-clipboard-check mb-2 d-block fa-2x"></i>
+                                Laporan Pelatihan
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

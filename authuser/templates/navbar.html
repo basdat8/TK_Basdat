@@ -1,0 +1,253 @@
+<!-- Responsive Bootstrap Navbar for Zoo Management System -->
+<nav class="navbar navbar-expand-lg navbar-dark" style="background: linear-gradient(135deg, #2d6a4f 0%, #40916c 100%);">
+    <div class="container">        <!-- Brand/Logo on the left -->
+        <a class="navbar-brand fw-bold" href="{% url 'wajib:home' %}">
+            🏥 Sizopi Zoo
+        </a>
+
+        <!-- Mobile Toggle Button -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Navbar Content -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                {% if user.is_authenticated or request.session.username %}
+                    <!-- User is logged in -->                    <!-- Dashboard - Always show for logged in users -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'wajib:home' %}">
+                            <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                        </a>
+                    </li>
+
+                    <!-- Role-based navigation items (Center-right) -->                    
+                     {% if user_role == 'penjaga_hewan' or request.session.user_role == 'penjaga_hewan' %}
+                        <!-- Penjaga Hewan - Catatan Perawatan Hewan Dropdown -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="perawatanDropdown" role="button" 
+                               data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-clipboard-list me-1"></i>Catatan Perawatan Hewan
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'list_hewan' %}">
+                                        <i class="fas fa-paw me-1"></i>List Hewan
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'list_habitat' %}">
+                                        <i class="fas fa-home me-1"></i>List Habitat
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    {% endif %}                      
+                    {% if user_role == 'dokter_hewan' or request.session.user_role == 'dokter_hewan' %}
+                        <!-- Dokter Hewan - Manajemen Data Satwa Dropdown -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="manajemenDataDropdown" role="button" 
+                               data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-stethoscope me-1"></i>Manajemen Data Satwa
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'list_hewan' %}">
+                                        <i class="fas fa-paw me-1"></i>List Hewan
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    {% endif %}
+
+                    {% if user_role == 'staf_admin' or request.session.user_role == 'staf_admin' %}
+                        <!-- Staf Admin - Catatan Perawatan Hewan Dropdown -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="perawatanDropdownAdmin" role="button" 
+                               data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-clipboard-list me-1"></i>Catatan Perawatan Hewan
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'list_hewan' %}">
+                                        <i class="fas fa-paw me-1"></i>List Hewan
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'list_habitat' %}">
+                                        <i class="fas fa-home me-1"></i>List Habitat
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    {% endif %}
+
+                    {% if user_role == 'pengunjung' or request.session.user_role == 'pengunjung' %}
+                        <!-- Pengunjung - Informasi Kebun Binatang Dropdown -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="infoDropdown" role="button" 
+                               data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-info-circle me-1"></i>Informasi Kebun Binatang
+                            </a>                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'list_hewan' %}">
+                                        <i class="fas fa-paw me-1"></i>Hewan
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    {% endif %}
+                      <!-- User Profile Dropdown (Far right) -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" 
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user me-1"></i>
+                            {% if request.session.nama_lengkap %}
+                                {{ request.session.nama_lengkap|title }}
+                            {% else %}
+                                {{ request.session.username|title }}
+                            {% endif %}
+                        </a>                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><h6 class="dropdown-header">
+                                Role: {{ user_role|default:request.session.user_role|title }}
+                            </h6></li>
+                            <li><a class="dropdown-item" href="{% url 'wajib:edit_profile' %}">
+                                <i class="fas fa-user-edit me-1"></i>Edit Profil
+                            </a></li>
+                            <li><a class="dropdown-item" href="{% url 'wajib:ubah_password' %}">
+                                <i class="fas fa-key me-1"></i>Ubah Password
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'wajib:logout' %}">
+                                <i class="fas fa-sign-out-alt me-1"></i>Logout
+                            </a></li>
+                        </ul>
+                    </li>{% else %}
+                    <!-- User is not logged in - Show Login and Register on the right -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'wajib:login' %}">
+                            <i class="fas fa-sign-in-alt me-1"></i>Login
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'wajib:pilih_role' %}">
+                            <i class="fas fa-user-plus me-1"></i>Registrasi
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- CSS is already included in base.html -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize all Bootstrap dropdowns directly
+        var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
+        dropdownElementList.map(function(dropdownToggleEl) {
+            return new bootstrap.Dropdown(dropdownToggleEl);
+        });
+
+        // Alternative initialization for nested dropdowns
+        document.querySelectorAll('.dropdown-menu a.dropdown-toggle').forEach(function(element) {
+            element.addEventListener('click', function(e) {
+                var submenu = this.nextElementSibling;
+                if (!submenu) return;
+                
+                e.preventDefault();
+                e.stopPropagation();
+
+                if (submenu.style.display === 'block') {
+                    submenu.style.display = 'none';
+                } else {
+                    submenu.style.display = 'block';
+                }
+            });
+        });
+    });
+</script>
+
+<style>
+    .navbar-brand {
+        font-size: 1.5rem;
+    }
+    
+    .nav-link {
+        font-weight: 500;
+        transition: color 0.3s ease;
+    }
+    
+    .nav-link:hover, .nav-link:focus {
+        color: #52b788 !important;
+    }
+    
+    .dropdown-toggle.show {
+        color: #52b788 !important;
+    }
+    
+    .dropdown-menu {
+        border: none;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .dropdown-item:hover {
+        background-color: #f8f9fa;
+        color: #2d6a4f;
+    }
+    
+    /* Nested dropdown styles */
+    .dropdown-submenu {
+        position: relative;
+    }
+    
+    .dropdown-submenu .dropdown-menu {
+        top: 0;
+        left: 100%;
+        margin-top: -8px;
+        display: none;
+    }
+    
+    .dropdown-menu-end {
+        right: 0;
+        left: auto;
+    }
+    
+    .dropdown-header {
+        color: #6c757d;
+        font-size: 0.875rem;
+    }
+      @media (max-width: 991px) {
+        .navbar-nav {
+            text-align: center;
+        }
+        
+        .dropdown-menu {
+            position: static !important;
+            transform: none !important;
+            box-shadow: none;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .dropdown-item {
+            color: white;
+        }
+        
+        .dropdown-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #52b788;
+        }
+        
+        .dropdown-submenu .dropdown-menu {
+            margin-left: 20px;
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        .dropdown-menu-end {
+            right: auto;
+            left: 0;
+        }
+    }
+</style>

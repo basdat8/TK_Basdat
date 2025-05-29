@@ -17,7 +17,11 @@ def show_login(request):
     """
     Login view for Sizopi system
     """
-    context = {}
+    # Provide default context for navbar
+    context = {
+        'user_role': None,  # No user role when not logged in
+        'user': None,       # No user when not logged in
+    }
     
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -134,17 +138,17 @@ def determine_user_role(username):
 
 def get_redirect_url(role):
     """
-    Get appropriate redirect URL based on user role
+    Return redirect URL based on user role
     """
-    role_redirects = {
+    role_map = {
         'pengunjung': 'wajib:dashboard_pengunjung',
-        'dokter_hewan': 'wajib:dashboard_dokter_hewan', 
+        'dokter_hewan': 'wajib:dashboard_dokter_hewan',
         'penjaga_hewan': 'wajib:dashboard_penjaga_hewan',
         'pelatih_hewan': 'wajib:dashboard_pelatih_hewan',
         'staf_admin': 'wajib:dashboard_staf_admin'
     }
     
-    return role_redirects.get(role, 'wajib:home')
+    return role_map.get(role, 'wajib:login')  # Redirect to login if role not found
 
 
 def logout_view(request):
@@ -481,10 +485,15 @@ def get_pelatih_hewan_data(username):
             animals = cursor.fetchall()
             
             for animal in animals:
-                age = (date.today() - animal[2]).days // 365 if animal[2] else 0
+                # Format the birth date properly
+                birth_date = animal[2]
+                formatted_birth_date = birth_date.strftime('%Y-%m-%d') if birth_date else None
+                age = (date.today() - birth_date).days // 365 if birth_date else 0
+                
                 daftar_hewan.append({
                     'nama': animal[0],
                     'spesies': animal[1],
+                    'tanggal_lahir': formatted_birth_date,  # Add formatted date
                     'umur': f'{age} tahun',
                     'status': 'Siap Show' if animal[3] == 'Sehat' else 'Perlu Perawatan'
                 })
@@ -572,11 +581,12 @@ def dashboard_pengunjung(request):
         return redirect('wajib:login')
     
     additional_data = get_pengunjung_data(request.session.get('username'))
-    
     context = {
         'user_data': dashboard_data,
         'riwayat_kunjungan': additional_data['riwayat_kunjungan'],
         'tiket_data': additional_data['tiket_data'],
+        'username': request.session.get('username'),
+        'user_role': 'pengunjung'
     }
     return render(request, 'dashboard/pengunjung.html', context)
 
@@ -588,10 +598,11 @@ def dashboard_dokter_hewan(request):
         return redirect('wajib:login')
     
     medical_stats = get_dokter_hewan_data(request.session.get('username'))
-    
     context = {
         'user_data': dashboard_data,
-        'medical_stats': medical_stats
+        'medical_stats': medical_stats,
+        'username': request.session.get('username'),
+        'user_role': 'dokter_hewan'
     }
     return render(request, 'dashboard/dokter_hewan.html', context)
 
@@ -603,11 +614,12 @@ def dashboard_penjaga_hewan(request):
         return redirect('wajib:login')
     
     feeding_info = get_penjaga_hewan_data(request.session.get('username'))
-    
     context = {
         'user_data': dashboard_data,
         'feeding_data': feeding_info['feeding_data'],
-        'feeding_stats': feeding_info['stats']
+        'feeding_stats': feeding_info['stats'],
+        'username': request.session.get('username'),
+        'user_role': 'penjaga_hewan'
     }
     return render(request, 'dashboard/penjaga_hewan.html', context)
 
@@ -619,12 +631,13 @@ def dashboard_pelatih_hewan(request):
         return redirect('wajib:login')
     
     training_info = get_pelatih_hewan_data(request.session.get('username'))
-    
     context = {
         'user_data': dashboard_data,
         'jadwal_pertunjukan': training_info['jadwal_pertunjukan'],
         'daftar_hewan': training_info['daftar_hewan'],
-        'status_latihan': training_info['status_latihan']
+        'status_latihan': training_info['status_latihan'],
+        'username': request.session.get('username'),
+        'user_role': 'pelatih_hewan'
     }
     return render(request, 'dashboard/pelatih_hewan.html', context)
 
@@ -636,11 +649,12 @@ def dashboard_staf_admin(request):
         return redirect('wajib:login')
     
     admin_stats = get_staf_admin_data()
-    
     context = {
         'user_data': dashboard_data,
         'tiket_stats': admin_stats['tiket_stats'],
-        'pengunjung_stats': admin_stats['pengunjung_stats']
+        'pengunjung_stats': admin_stats['pengunjung_stats'],
+        'username': request.session.get('username'),
+        'user_role': 'staf_admin'
     }
     return render(request, 'dashboard/staf_admin.html', context)
 
@@ -812,3 +826,168 @@ def form_staff_view(request):
             return redirect('wajib:form_staff')
 
     return render(request, 'form_staff.html')
+
+
+def home_view(request):
+    """
+    Home view that redirects users based on their role in the session
+    """
+    if request.session.get('username') and request.session.get('user_role'):
+        # User is logged in, redirect to their role-specific dashboard
+        user_role = request.session.get('user_role')
+        redirect_url = get_redirect_url(user_role)
+        return redirect(redirect_url)
+    else:
+        # User is not logged in, redirect to login page
+        return redirect('wajib:login')
+
+def dictfetchone(cursor):
+    """Convert database row to dictionary"""
+    desc = cursor.description
+    row = cursor.fetchone()
+    if row is None:
+        return None
+    
+    result = {}
+    for i in range(len(row)):
+        value = row[i]
+        # Format date objects to YYYY-MM-DD for HTML input compatibility
+        if isinstance(value, date):
+            value = value.strftime('%Y-%m-%d')
+        result[desc[i].name] = value
+    
+    return result
+
+@csrf_protect
+def edit_profile_view(request):
+    username = request.session.get('username')
+    if not username:
+        messages.error(request, "Anda belum login.")
+        return redirect('wajib:login')
+
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        nama_depan = request.POST.get('nama_depan')
+        nama_tengah = request.POST.get('nama_tengah') or None
+        nama_belakang = request.POST.get('nama_belakang')
+        no_telepon = request.POST.get('no_telepon')
+
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute("""
+                    UPDATE pengguna
+                    SET email = %s,
+                        nama_depan = %s,
+                        nama_tengah = %s,
+                        nama_belakang = %s,
+                        no_telepon = %s
+                    WHERE username = %s
+                """, [email, nama_depan, nama_tengah, nama_belakang, no_telepon, username])
+                
+                if request.POST.get('alamat') is not None:
+                    alamat = request.POST.get('alamat')
+                    tgl_lahir = request.POST.get('tgl_lahir')
+                    # Make sure tgl_lahir is not empty before updating
+                    if tgl_lahir:
+                        cursor.execute("""
+                            UPDATE pengunjung
+                            SET alamat = %s, tgl_lahir = %s
+                            WHERE username_p = %s
+                        """, [alamat, tgl_lahir, username])
+                    else:
+                        cursor.execute("""
+                            UPDATE pengunjung
+                            SET alamat = %s
+                            WHERE username_p = %s
+                        """, [alamat, username])
+
+                elif request.POST.getlist('spesialisasi'):
+                    spesialisasi = request.POST.getlist('spesialisasi')
+                    cursor.execute("DELETE FROM spesialisasi WHERE username_sh = %s", [username])
+                    for sp in spesialisasi:
+                        cursor.execute("""
+                            INSERT INTO spesialisasi (username_sh, nama_spesialisasi)
+                            VALUES (%s, %s)
+                        """, [username, sp])
+
+            messages.success(request, "Profil berhasil diperbarui.")
+            return redirect('wajib:edit_profile')
+        except Exception as e:
+            messages.error(request, f"Gagal memperbarui profil: {str(e)}")
+            return redirect('wajib:edit_profile')
+
+    else:
+        user_data = {}
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM pengguna WHERE username = %s", [username])
+            user_data = dictfetchone(cursor) or {}            
+            cursor.execute("SELECT * FROM pengunjung WHERE username_p = %s", [username])
+            pengunjung = dictfetchone(cursor)
+            if pengunjung:
+                user_data.update(pengunjung)
+                user_data['role'] = 'pengunjung'
+                # Format tgl_lahir for HTML date input (YYYY-MM-DD)
+                if 'tgl_lahir' in user_data and user_data['tgl_lahir']:
+                    if isinstance(user_data['tgl_lahir'], date):
+                        user_data['tgl_lahir'] = user_data['tgl_lahir'].strftime('%Y-%m-%d')
+
+            cursor.execute("SELECT * FROM dokter_hewan WHERE username_dh = %s", [username])
+            dokter = dictfetchone(cursor)
+            if dokter:
+                user_data.update(dokter)
+                user_data['role'] = 'dokter_hewan'
+                cursor.execute("SELECT nama_spesialisasi FROM spesialisasi WHERE username_sh = %s", [username])
+                user_data['spesialisasi'] = [row[0] for row in cursor.fetchall()]
+
+            cursor.execute("SELECT * FROM penjaga_hewan WHERE username_jh = %s", [username])
+            if cursor.fetchone():
+                user_data['role'] = 'penjaga_hewan'
+
+            cursor.execute("SELECT * FROM staf_admin WHERE username_sa = %s", [username])
+            if cursor.fetchone():
+                user_data['role'] = 'staf_admin'
+                
+            cursor.execute("SELECT * FROM pelatih_hewan WHERE username_lh = %s", [username])
+            if cursor.fetchone():
+                user_data['role'] = 'pelatih_hewan'
+
+        return render(request, 'edit_profile.html', {
+            'user_data': user_data,
+            'detail': user_data,  # Add detail as alias to user_data for template compatibility
+            'role': user_data.get('role', 'pengunjung'),  # Add role as separate context variable
+            'spesialisasi_list': ['Mamalia Besar', 'Reptil', 'Burung Eksotis', 'Primata']
+        })
+
+@csrf_protect
+def ubah_password_view(request):
+    username = request.session.get('username')
+    if not username:
+        messages.error(request, "Anda belum login.")
+        return redirect('wajib:login')
+
+    if request.method == 'POST':
+        old = request.POST.get('old_password')
+        new = request.POST.get('new_password')
+        confirm = request.POST.get('confirm_password')
+
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT password FROM pengguna WHERE username = %s", [username])
+                result = cursor.fetchone()
+
+                if not result or result[0] != old:
+                    messages.error(request, "Password lama salah.")
+                    return redirect('wajib:ubah_password')
+
+                if new != confirm:
+                    messages.error(request, "Konfirmasi password tidak cocok.")
+                    return redirect('wajib:ubah_password')
+
+                cursor.execute("UPDATE pengguna SET password = %s WHERE username = %s", [new, username])
+                messages.success(request, "Password berhasil diperbarui.")
+                return redirect('wajib:edit_profile')
+        except Exception as e:
+            messages.error(request, f"Gagal mengubah password: {str(e)}")
+            return redirect('wajib:ubah_password')
+
+    return render(request, 'ubah_password.html')
