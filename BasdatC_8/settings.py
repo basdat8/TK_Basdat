@@ -30,6 +30,14 @@ DEBUG = config('DEBUG', default=True, cast=bool)
 ALLOWED_HOSTS = ['*']  # Railway deployment
 
 
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://tkbasdat-production.up.railway.app'
+]
+
+# Optional tambahan aman:
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 # Application definition
 
 INSTALLED_APPS = [
