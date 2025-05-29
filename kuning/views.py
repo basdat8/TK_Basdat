@@ -2,6 +2,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db import connection
 from django.http import Http404
+from django.contrib import messages 
 
 # utils
 
@@ -27,12 +28,46 @@ def tambah_hewan(request):
         status = request.POST['status_kesehatan']
         habitat = request.POST['nama_habitat']
         foto = request.POST['url_foto']
+
         with connection.cursor() as cursor:
+            # Cek apakah satwa duplikat
+            cursor.execute("""
+                SELECT 1 FROM hewan 
+                WHERE nama = %s AND spesies = %s AND asal_hewan = %s
+            """, [nama, spesies, asal])
+            if cursor.fetchone():
+                messages.error(
+                    request,
+                    f'Data satwa atas nama “{nama}”, spesies “{spesies}”, dan berasal dari “{asal}” sudah terdaftar.'
+                )
+
+                # Ambil ulang daftar habitat untuk dropdown
+                cursor.execute("SELECT nama FROM habitat")
+                habitats = [row[0] for row in cursor.fetchall()]
+
+                # Kembalikan form dengan data yang sudah diisi
+                return render(request, 'form_hewan.html', {
+                    'habitats': habitats,
+                    'data': {
+                        'nama': nama,
+                        'spesies': spesies,
+                        'asal_hewan': asal,
+                        'tanggal_lahir': tgl,
+                        'status_kesehatan': status,
+                        'nama_habitat': habitat,
+                        'url_foto': foto
+                    }
+                })
+
+            # Insert jika tidak duplikat
             cursor.execute("""
                 INSERT INTO hewan (id, nama, spesies, asal_hewan, tanggal_lahir, status_kesehatan, nama_habitat, url_foto)
                 VALUES (gen_random_uuid(), %s, %s, %s, %s, %s, %s, %s)
             """, [nama, spesies, asal, tgl, status, habitat, foto])
+
         return redirect('list_hewan')
+
+    # GET method
     with connection.cursor() as cursor:
         cursor.execute("SELECT nama FROM habitat")
         habitats = [row[0] for row in cursor.fetchall()]

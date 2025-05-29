@@ -1,15 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Daftar Habitat</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #f4fdf5;
+            margin: 20px;
+        }
+        h2 {
+            color: #2e7d32;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .tambah-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .tambah-btn {
+            background-color: #81c784;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .habitat-card {
+            background-color: #e8f5e9;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .habitat-card h3 {
+            margin-top: 0;
+            color: #388e3c;
+        }
+        .habitat-info {
+            margin: 10px 0;
+        }
+        .habitat-info i {
+            width: 20px;
+            color: #66bb6a;
+        }
+        .aksi {
+            margin-top: 12px;
+        }
+        .aksi a {
+            margin-right: 10px;
+            text-decoration: none;
+            color: #2e7d32;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
 <h2>Daftar Habitat</h2>
-<a href="{% url 'tambah_habitat' %}">+ Tambah Habitat</a>
-<table border="1">
-<tr><th>Nama Habitat</th><th>Luas Area</th><th>Kapasitas</th><th>Status Lingkungan</th><th>Aksi</th></tr>
-{% for h in data %}
-<tr>
-    <td>{{ h.nama }}</td><td>{{ h.luas_area }}</td><td>{{ h.kapasitas }}</td><td>{{ h.status }}</td>
-    <td>
-        <a href="{% url 'detail_habitat' h.nama %}">Detail</a> |
-        <a href="{% url 'edit_habitat' h.nama %}">Edit</a> |
-        <a href="{% url 'hapus_habitat' h.nama %}">Hapus</a>
-    </td>
-</tr>
-{% endfor %}
-</table>
+<div class="tambah-container">
+    <a href="{% url 'tambah_habitat' %}" class="tambah-btn"><i class="fa fa-plus"></i> Tambah Habitat</a>
+</div>
+
+<div class="grid-container">
+    {% for h in data %}
+    <div class="habitat-card">
+        <h3><i class="fa fa-tree"></i> {{ h.nama }}</h3>
+        <div class="habitat-info"><i class="fa fa-expand-arrows-alt"></i> Luas Area: {{ h.luas_area }} m²</div>
+        <div class="habitat-info"><i class="fa fa-users"></i> Kapasitas: {{ h.kapasitas }}</div>
+        <div class="habitat-info"><i class="fa fa-leaf"></i> Status Lingkungan: {{ h.status }}</div>
+        
+        <div class="aksi">
+            <a href="{% url 'detail_habitat' h.nama %}"><i class="fa fa-eye"></i> Detail</a>
+            <a href="{% url 'edit_habitat' h.nama %}"><i class="fa fa-edit"></i> Edit</a>
+            <a href="{% url 'hapus_habitat' h.nama %}"><i class="fa fa-trash"></i> Hapus</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+</body>
+</html>

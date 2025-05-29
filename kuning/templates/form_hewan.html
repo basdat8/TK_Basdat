@@ -1,23 +1,135 @@
-<h2>Form Tambah/Edit Satwa</h2>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Form Satwa</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #f4fdf5;
+            margin: 30px;
+        }
+        h2 {
+            text-align: center;
+            color: #2e7d32;
+            margin-bottom: 20px;
+        }
+        .message-box {
+            max-width: 700px;
+            margin: 0 auto 20px;
+            list-style: none;
+            padding: 0;
+        }
+        .message-box li {
+            background-color: #ffebee;
+            color: #c62828;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        form {
+            background-color: #e8f5e9;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        label {
+            font-weight: bold;
+            color: #388e3c;
+        }
+        input[type="text"],
+        input[type="date"],
+        select {
+            width: 100%;
+            padding: 10px;
+            margin: 6px 0 16px;
+            border: 1px solid #c8e6c9;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+        .btn-group {
+            text-align: center;
+        }
+        .btn-submit {
+            background-color: #66bb6a;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 14px;
+            margin-right: 12px;
+            cursor: pointer;
+        }
+        .btn-cancel {
+            background-color: #c8e6c9;
+            color: #2e7d32;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 14px;
+            text-decoration: none;
+        }
+        .btn-submit:hover {
+            background-color: #4caf50;
+        }
+        .btn-cancel:hover {
+            background-color: #a5d6a7;
+        }
+    </style>
+</head>
+<body>
+
+<h2><i class="fa fa-paw"></i> Form Tambah/Edit Satwa</h2>
+
+{% if messages %}
+    <ul class="message-box">
+        {% for message in messages %}
+            <li><i class="fa fa-exclamation-circle"></i> {{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
 <form method="post">
     {% csrf_token %}
-    Nama Individu: <input type="text" name="nama" value="{{ data.nama|default:'' }}"><br>
-    Spesies: <input type="text" name="spesies" value="{{ data.spesies|default:'' }}"><br>
-    Asal Hewan: <input type="text" name="asal_hewan" value="{{ data.asal_hewan|default:'' }}"><br>
-    Tanggal Lahir: <input type="date" name="tanggal_lahir" value="{{ data.tanggal_lahir|default:'' }}"><br>
-    Status Kesehatan: 
-    <select name="status_kesehatan">
+
+    <label for="nama">Nama Individu:</label>
+    <input type="text" id="nama" name="nama" value="{{ data.nama|default:'' }}" required>
+
+    <label for="spesies">Spesies:</label>
+    <input type="text" id="spesies" name="spesies" value="{{ data.spesies|default:'' }}" required>
+
+    <label for="asal_hewan">Asal Hewan:</label>
+    <input type="text" id="asal_hewan" name="asal_hewan" value="{{ data.asal_hewan|default:'' }}" required>
+
+    <label for="tanggal_lahir">Tanggal Lahir:</label>
+    <input type="date" id="tanggal_lahir" name="tanggal_lahir" value="{{ data.tanggal_lahir|default:'' }}" required>
+
+    <label for="status_kesehatan">Status Kesehatan:</label>
+    <select id="status_kesehatan" name="status_kesehatan" required>
         <option value="Sehat" {% if data.status_kesehatan == "Sehat" %}selected{% endif %}>Sehat</option>
         <option value="Sakit" {% if data.status_kesehatan == "Sakit" %}selected{% endif %}>Sakit</option>
         <option value="Pemantauan" {% if data.status_kesehatan == "Pemantauan" %}selected{% endif %}>Dalam Pemantauan</option>
-    </select><br>
-    Habitat:
-    <select name="nama_habitat">
+    </select>
+
+    <label for="nama_habitat">Habitat:</label>
+    <select id="nama_habitat" name="nama_habitat" required>
         {% for h in habitats %}
             <option value="{{ h }}" {% if data.nama_habitat == h %}selected{% endif %}>{{ h }}</option>
         {% endfor %}
-    </select><br>
-    URL Foto Satwa: <input type="text" name="url_foto" value="{{ data.url_foto|default:'' }}"><br>
-    <button type="submit">SIMPAN</button>
+    </select>
+
+    <label for="url_foto">URL Foto Satwa:</label>
+    <input type="text" id="url_foto" name="url_foto" value="{{ data.url_foto|default:'' }}" placeholder="https://example.com/image.jpg">
+
+    <div class="btn-group">
+        <button type="submit" class="btn-submit"><i class="fa fa-save"></i> Simpan</button>
+        <a href="{% url 'list_hewan' %}" class="btn-cancel"><i class="fa fa-times"></i> Batal</a>
+    </div>
 </form>
-<a href="{% url 'list_hewan' %}">[BATAL]</a>
+
+</body>
+</html>

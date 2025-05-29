@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pilih Role Anda</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: white;
+            padding: 40px 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border: 1px solid #cbbc81;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 40px;
+            color: #333;
+        }
+
+        .role-options {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .role-card {
+            flex: 1;
+            min-width: 200px;
+            padding: 20px;
+            border: 1px solid #cbbc81;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .role-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .role-circle {
+            width: 120px;
+            height: 120px;
+            border: 2px solid #8BC34A;
+            border-radius: 50%;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .role-title {
+            font-size: 18px;
+            color: #333;
+            text-align: center;
+        }
+
+        .submit-btn {
+            display: block;
+            width: 200px;
+            margin: 0 auto;
+            padding: 12px;
+            background-color: #b5cd7c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .submit-btn:hover {
+            background-color: #a3bc6a;
+        }
+
+        .selected .role-circle {
+            background-color: rgba(203, 188, 129, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .role-options {
+                flex-direction: column;
+            }
+
+            .role-card {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Pilih Role Anda</h1>
+
+        <div class="role-options">
+            <div class="role-card" onclick="selectRole('pengunjung')">
+                <div class="role-circle" id="pengunjung-circle">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="90" height="90" fill="none"
+                        stroke="#90CB81" stroke-width="1">
+                        <circle cx="12" cy="7" r="4" />
+                        <path d="M4 21v-2a7 7 0 0 1 7-7h2a7 7 0 0 1 7 7v2" />
+                    </svg>
+                </div>
+                <div class="role-title">Pengunjung</div>
+            </div>
+
+            <div class="role-card" onclick="selectRole('dokter')">
+                <div class="role-circle" id="dokter-circle">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="90" height="90" fill="#90CB81">
+                        <g>
+                            <path
+                                d="M151.496 166.447h-2.993c-29.403 0-53.326-23.921-53.326-53.323V78.731a5.48 5.48 0 0 1 5.482-5.482h98.68a5.48 5.48 0 0 1 5.482 5.482v34.393c.001 29.402-23.922 53.323-53.325 53.323zm-45.354-82.234v28.91c0 23.358 19.003 42.359 42.362 42.359h2.993c23.358 0 42.362-19.001 42.362-42.359v-28.91h-87.717z" />
+                            <path
+                                d="M150 210.305a5.476 5.476 0 0 1-4.385-2.195l-16.447-21.929a5.481 5.481 0 0 1 4.385-8.769v-17.394a5.483 5.483 0 0 1 6.564-5.375c2.77.557 5.595.841 8.387.841h2.993c2.792 0 5.616-.284 8.387-.841a5.488 5.488 0 0 1 4.556 1.135 5.477 5.477 0 0 1 2.008 4.24v17.394a5.483 5.483 0 0 1 4.904 3.03 5.475 5.475 0 0 1-.519 5.739l-16.447 21.929a5.48 5.48 0 0 1-4.386 2.195zm-6.863-23.771 6.863 9.15 6.863-9.15a5.469 5.469 0 0 1-1.381-3.641v-16.597c-1.33.102-2.661.15-3.986.15h-2.993c-1.325 0-2.655-.048-3.986-.15v16.597a5.463 5.463 0 0 1-1.38 3.641zM197.97 248.68c-1.044-6.526-5.515-10.964-12.335-10.964s-11.291 4.438-12.335 10.964c-5.488 0-8.223 4.363-8.223 8.454 0 4.406 3.581 7.993 7.999 7.993h25.12c4.417 0 7.999-3.587 7.999-7.993-.002-4.09-2.738-8.454-8.225-8.454zM210.305 234.975c0 4.54-2.452 8.223-5.482 8.223-3.03 0-5.482-3.684-5.482-8.223 0-4.54 2.452-8.223 5.482-8.223 3.029-.001 5.482 3.683 5.482 8.223zM171.929 234.975c0 4.54-2.452 8.223-5.482 8.223-3.03 0-5.482-3.684-5.482-8.223 0-4.54 2.452-8.223 5.482-8.223 3.03-.001 5.482 3.683 5.482 8.223zM182.893 224.01c0 4.54-2.452 8.223-5.482 8.223-3.03 0-5.482-3.684-5.482-8.223 0-4.54 2.452-8.223 5.482-8.223 3.03 0 5.482 3.684 5.482 8.223zM199.34 224.01c0 4.54-2.452 8.223-5.482 8.223-3.03 0-5.482-3.684-5.482-8.223 0-4.54 2.452-8.223 5.482-8.223 3.03 0 5.482 3.684 5.482 8.223zM166.447 45.837h-10.965V34.873h-10.964v10.964h-10.965v10.965h10.965v10.964h10.964V56.802h10.965z" />
+                            <path
+                                d="M232.234 287.056H106.142a5.48 5.48 0 0 1-5.482-5.482 5.48 5.48 0 0 1 5.482-5.482h120.609v-35.463c0-28.814-23.439-52.253-52.25-52.253h-5.314l-14.803 19.734c-2.066 2.762-6.703 2.762-8.769 0l-14.803-19.734h-5.314c-28.811 0-52.25 23.439-52.25 52.253v35.463h10.965a5.48 5.48 0 0 1 5.482 5.482 5.48 5.48 0 0 1-5.482 5.482H67.766a5.48 5.48 0 0 1-5.482-5.482v-40.946c0-34.858 28.359-63.217 63.214-63.217h8.055c1.727 0 3.351.814 4.385 2.195L150 195.684l12.062-16.077a5.476 5.476 0 0 1 4.385-2.195h8.055c34.856 0 63.215 28.359 63.215 63.217v40.946a5.482 5.482 0 0 1-5.483 5.481zM204.822 84.213H95.177a5.48 5.48 0 0 1-5.482-5.482v-7.677c0-32.042 26.314-58.11 58.658-58.11h3.293c11.353 0 22.424 3.298 32.015 9.53a5.483 5.483 0 0 1 1.609 7.586 5.48 5.48 0 0 1-7.584 1.612c-7.811-5.081-16.816-7.763-26.041-7.763h-3.293c-26.298 0-47.694 21.147-47.694 47.145v2.195h98.68v-2.195c0-9.026-2.663-17.849-7.699-25.505a5.486 5.486 0 0 1 1.569-7.597 5.481 5.481 0 0 1 7.592 1.569c6.216 9.455 9.503 20.36 9.503 31.534v7.677a5.478 5.478 0 0 1-5.481 5.481z" />
+                            <path
+                                d="M199.34 117.106a5.48 5.48 0 0 1-5.482-5.482V78.731a5.48 5.48 0 0 1 5.482-5.482c10.373 0 21.929 8.256 21.929 20.103v3.651c0 11.848-11.556 20.103-21.929 20.103zm5.482-31.453v19.049c3.159-1.702 5.482-4.679 5.482-7.699v-3.651c.001-3.02-2.323-5.996-5.482-7.699zM100.66 117.106c-10.373 0-21.929-8.256-21.929-20.103v-3.651c0-11.848 11.556-20.103 21.929-20.103a5.48 5.48 0 0 1 5.482 5.482v32.894a5.48 5.48 0 0 1-5.482 5.481zm-5.483-31.453c-3.159 1.702-5.482 4.679-5.482 7.699v3.651c0 3.02 2.324 5.996 5.482 7.699V85.653z" />
+                        </g>
+                    </svg>
+                </div>
+                <div class="role-title">Dokter Hewan</div>
+            </div>
+
+            <div class="role-card" onclick="selectRole('staff')">
+                <div class="role-circle" id="staff-circle">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="90" height="90"
+                        style="transform: scale(0.8); margin: -15px;">
+                        <g data-name="Layer 2">
+                            <g data-name="male employee protection" fill="#90CB81" stroke="none">
+                                <path
+                                    d="M63.63 41a1 1 0 0 0-.63-.77l-10.92-4.11a1 1 0 0 0-.71 0l-5 1.9a23.43 23.43 0 0 0-8.79-4.81 13.57 13.57 0 0 0 4.23-9.54v-8.3c0-6.66-4-12-10.6-14.35C26.08-.79 20.9-.14 18.43 2.57c-5.72 1.21-8.29 7.77-8.22 11.92l.06 3.64v5.54a13.61 13.61 0 0 0 4.25 9.55C5 36.42.2 42.72 0 52.41a1 1 0 0 0 .67 1 77.78 77.78 0 0 0 21.8 3.93h.26q1.75.07 3.5.07c1.19 0 2.38 0 3.56-.09h.27a82.85 82.85 0 0 0 12.16-1.42 18.41 18.41 0 0 0 3.64 4.28 27 27 0 0 0 5.44 3.4 1 1 0 0 0 .81 0 27.05 27.05 0 0 0 5.44-3.4C62.82 55.6 64.92 49 63.63 41zM19.12 4.47a1 1 0 0 0 .61-.36c1.78-2.23 6.43-2.75 10.82-1.21 2.17.76 9.26 3.91 9.26 12.47v1.75H28.34c-4.28 0-5.32-1.35-7.46-4.67A1 1 0 0 0 20 12a1 1 0 0 0-.84.46l-.74 1.17c-1.72 2.76-2.18 3.5-4.87 3.5h-1.3v-2.66c-.1-3.08 1.88-9.15 6.87-10zm-6.86 19.2v-4.55h1.32c3.73 0 4.75-1.52 6.48-4.29 1.9 2.75 3.68 4.29 8.28 4.29h11.47v4.56c0 3.77-2.19 7.49-5.85 9.93A14.19 14.19 0 0 1 26 36.07c-7.17-.07-13.74-5.96-13.74-12.4zm4 11.09a16.86 16.86 0 0 0 4.82 2.49l1.49 4L19.71 51a1 1 0 0 0 0 .65l1.41 3.56A75.55 75.55 0 0 1 2 51.73C2.45 43 7.13 37.48 16.29 34.76zm7.06 20.58-1.62-4.08 2.89-9.71a1 1 0 0 0 0-.63l-1.14-3.1a16 16 0 0 0 2.57.24h.1a15 15 0 0 0 2.88-.3l-1 3.21a1 1 0 0 0 0 .54l2.54 9.54-1.41 4.27q-2.87.12-5.79.02zm8-.1 1.26-3.82a1 1 0 0 0 0-.57l-2.55-9.56 1.23-4.13a17 17 0 0 0 3.79-1.89l.69-.49a23.09 23.09 0 0 1 8.47 4.05l-3.79 1.44a1 1 0 0 0-.63.78 22.14 22.14 0 0 0 1.43 13 80.77 80.77 0 0 1-9.9 1.19zm24.93 3.4a26.22 26.22 0 0 1-4.54 2.9 26.24 26.24 0 0 1-4.54-2.9 16.46 16.46 0 0 1-3.63-4.42c-1.9-3.4-2.52-7.51-1.85-12.28l4.83-1.83 5.18-2 10 3.8c1.05 7.09-.8 12.71-5.44 16.73z" />
+                                <path
+                                    d="M56 45.7 50.8 52l-2.35-2.27a1 1 0 0 0-1.39 1.44l3.13 3a1 1 0 0 0 .69.28h.05a1 1 0 0 0 .71-.36L57.55 47A1 1 0 1 0 56 45.7z" />
+                            </g>
+                        </g>
+                    </svg>
+                </div>
+                <div class="role-title">Staff</div>
+            </div>
+        </div>
+
+        <button type="button" class="submit-btn" id="submit-btn" disabled>Submit</button>
+    </div>
+
+    <script>
+        let selectedRole = null;
+
+        function selectRole(role) {
+            // Remove selected class from all circles
+            document.querySelectorAll('.role-circle').forEach(circle => {
+                circle.parentElement.classList.remove('selected');
+            });
+
+            // Add selected class to clicked circle
+            document.getElementById(`${role}-circle`).parentElement.classList.add('selected');
+
+            // Enable submit button
+            document.getElementById('submit-btn').disabled = false;
+
+            // Store selected role
+            selectedRole = role;
+        }
+
+        function saveRoleSelection(role) {
+            fetch('/submit-role/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCsrfToken()
+                },
+                body: JSON.stringify({ role: role })
+            });
+        }
+
+        document.getElementById('submit-btn').addEventListener('click', function () {
+            if (selectedRole) {
+                // Fetch the role-specific popup content
+                fetch(`/role-popup-content/${selectedRole}/`)
+                    .then(response => response.text())
+                    .then(popupHTML => {
+                        // Create a container for the popup
+                        const popupContainer = document.createElement('div');
+                        popupContainer.id = 'rolePopupContainer';
+                        popupContainer.innerHTML = popupHTML;
+
+                        // Add it to the document
+                        document.body.appendChild(popupContainer);
+
+                        // Show the popup
+                        const modal = document.getElementById('roleCompletionModal');
+                        modal.classList.add('modal-visible');
+
+                        // Save the role selection to the server
+                        saveRoleSelection(selectedRole);
+                    });
+            }
+        });
+    </script>
+</body>
+
+</html>
