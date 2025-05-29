@@ -669,7 +669,6 @@ def pilih_role_view(request):
 @csrf_protect
 def form_pengguna_view(request):
     if request.method == 'POST':
-        # Ambil semua input
         username = request.POST.get('username')
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirm_password')
@@ -682,7 +681,7 @@ def form_pengguna_view(request):
         tgl_lahir = request.POST.get('tgl_lahir')
 
         if password != confirm_password:
-            messages.error(request, "Password dan konfirmasi tidak sama.")
+            messages.error(request, "❌ Password dan konfirmasi tidak cocok.")
             return redirect('wajib:form_pengguna')
 
         try:
@@ -691,17 +690,24 @@ def form_pengguna_view(request):
                     INSERT INTO pengguna (username, password, nama_depan, nama_tengah, nama_belakang, email, no_telepon)
                     VALUES (%s, %s, %s, %s, %s, %s, %s)
                 """, [username, password, nama_depan, nama_tengah, nama_belakang, email, no_telepon])
+
                 cursor.execute("""
                     INSERT INTO pengunjung (username_p, alamat, tgl_lahir)
                     VALUES (%s, %s, %s)
                 """, [username, alamat, tgl_lahir])
-            messages.success(request, "Akun berhasil dibuat.")
+
+            messages.success(request, "✅ Akun pengunjung berhasil dibuat.")
             return redirect('wajib:login')
+
         except Exception as e:
-            messages.error(request, f"Gagal mendaftar: {str(e)}")
+            if "Username" in str(e):
+                messages.error(request, f"❌ ERROR: Username “{username}” sudah digunakan, silakan pilih username lain.")
+            else:
+                messages.error(request, f"❌ Gagal mendaftar: {str(e)}")
             return redirect('wajib:form_pengguna')
 
     return render(request, 'form_pengguna.html')
+
 
 @csrf_protect
 def form_dokterhewan_view(request):
@@ -715,10 +721,10 @@ def form_dokterhewan_view(request):
         email = request.POST.get('email')
         no_telepon = request.POST.get('no_telepon')
         no_str = request.POST.get('no_str')
-        spesialisasi = request.POST.getlist('spesialisasi')  # checkbox
+        spesialisasi = request.POST.getlist('spesialisasi')
 
         if password != confirm_password:
-            messages.error(request, "Password dan konfirmasi tidak sama.")
+            messages.error(request, "❌ Password dan konfirmasi tidak cocok.")
             return redirect('wajib:form_dokterhewan')
 
         try:
@@ -727,22 +733,30 @@ def form_dokterhewan_view(request):
                     INSERT INTO pengguna (username, password, nama_depan, nama_tengah, nama_belakang, email, no_telepon)
                     VALUES (%s, %s, %s, %s, %s, %s, %s)
                 """, [username, password, nama_depan, nama_tengah, nama_belakang, email, no_telepon])
+
                 cursor.execute("""
                     INSERT INTO dokter_hewan (username_dh, no_str)
                     VALUES (%s, %s)
                 """, [username, no_str])
+
                 for item in spesialisasi:
                     cursor.execute("""
                         INSERT INTO spesialisasi (username_sh, nama_spesialisasi)
                         VALUES (%s, %s)
                     """, [username, item])
-            messages.success(request, "Akun dokter berhasil dibuat.")
+
+            messages.success(request, "✅ Akun dokter hewan berhasil dibuat.")
             return redirect('wajib:login')
+
         except Exception as e:
-            messages.error(request, f"Gagal mendaftar: {str(e)}")
+            if "Username" in str(e):
+                messages.error(request, f"❌ ERROR: Username “{username}” sudah digunakan, silakan pilih username lain.")
+            else:
+                messages.error(request, f"❌ Gagal mendaftar: {str(e)}")
             return redirect('wajib:form_dokterhewan')
 
     return render(request, 'form_dokterhewan.html')
+
 
 @csrf_protect
 def form_staff_view(request):
@@ -758,7 +772,7 @@ def form_staff_view(request):
         peran = request.POST.get('peran')  # penjaga_hewan / staf_admin / pelatih_hewan
 
         if password != confirm_password:
-            messages.error(request, "Password dan konfirmasi tidak sama.")
+            messages.error(request, "❌ Password dan konfirmasi tidak cocok.")
             return redirect('wajib:form_staff')
 
         try:
@@ -783,11 +797,18 @@ def form_staff_view(request):
                         INSERT INTO pelatih_hewan (username_lh, id_staf)
                         VALUES (%s, gen_random_uuid())
                     """, [username])
+                else:
+                    messages.error(request, "❌ Peran tidak dikenali.")
+                    return redirect('wajib:form_staff')
 
-            messages.success(request, "Akun staff berhasil dibuat.")
+            messages.success(request, "✅ Akun staff berhasil dibuat.")
             return redirect('wajib:login')
+
         except Exception as e:
-            messages.error(request, f"Gagal mendaftar: {str(e)}")
+            if "Username" in str(e):
+                messages.error(request, f"❌ ERROR: Username “{username}” sudah digunakan, silakan pilih username lain.")
+            else:
+                messages.error(request, f"❌ Gagal mendaftar: {str(e)}")
             return redirect('wajib:form_staff')
 
     return render(request, 'form_staff.html')
