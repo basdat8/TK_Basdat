@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard Pengunjung{% endblock %}
+
+{% block content %}
+<h1>Selamat datang, {{ user.username }}!</h1>
+<p>Berikut adalah informasi dashboard Anda sebagai Pengunjung.</p>
+
+<!-- Misalnya, tampilkan data pengguna -->
+<ul>
+  <li>Email: {{ user.email }}</li>
+  <li>Nama: {{ user.get_full_name }}</li>
+  <li>Alamat: {{ user.pengunjung.alamat }}</li>
+  <li>Tanggal Lahir: {{ user.pengunjung.tgl_lahir }}</li>
+</ul>
+
+<!-- Link untuk melakukan sesuatu, misalnya melakukan reservasi -->
+<a href="{% url 'reservasi' %}">Buat Reservasi</a>
+
+{% endblock %}

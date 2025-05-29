@@ -13,7 +13,8 @@ def adopsi_view(request):
             FROM hewan h
             JOIN adopsi a ON h.id = a.id_hewan
             JOIN adopter ad ON a.id_adopter = ad.id_adopter
-        """)
+            WHERE a.id_adopter = %s
+        """, [request.user.id if request.user.is_authenticated else None])
         hewan_list = dictfetchall(cursor)
     return render(request, 'adopsi/halaman_adopsi.html', {'hewan_list': hewan_list})
 

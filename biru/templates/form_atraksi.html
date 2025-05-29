@@ -1,0 +1,50 @@
+<!-- templates/form_atraksi.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ data|default:"Tambah" }} Atraksi</title>
+</head>
+<body>
+    <h1>{{ data|default:"Tambah" }} Atraksi</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        <label>Nama:</label><br>
+        <input type="text" name="nama" value="{{ data.nama|default_if_none:'' }}"><br><br>
+
+        <label>Lokasi:</label><br>
+        <input type="text" name="lokasi" value="{{ data.lokasi|default_if_none:'' }}"><br><br>
+
+        <label>Kapasitas:</label><br>
+        <input type="number" name="kapasitas" value="{{ data.kapasitas|default_if_none:'' }}"><br><br>
+
+        <label>Jadwal:</label><br>
+        <input type="text" name="jadwal" value="{{ data.jadwal|default_if_none:'' }}"><br><br>
+
+        <label>Pelatih yang Terlibat:</label><br>
+        {% for p in pelatih_list %}
+            <input type="checkbox" name="pelatih" value="{{ p.id }}"
+                {% if p.id in selected_pelatih %}checked{% endif %}>
+            {{ p.nama }}<br>
+        {% empty %}
+            <p>Tidak ada pelatih</p>
+        {% endfor %}
+
+        <br>
+
+        <label>Hewan yang Terlibat:</label><br>
+        {% for h in hewan_list %}
+            <input type="checkbox" name="hewan" value="{{ h.id }}"
+                {% if h.id in selected_hewan %}checked{% endif %}>
+            {{ h.nama }}<br>
+        {% empty %}
+            <p>Tidak ada hewan</p>
+        {% endfor %}
+
+        <br>
+        <button type="submit">Simpan</button>
+    </form>
+
+    <a href="{% url 'list_atraksi' %}">Kembali ke daftar</a>
+</body>
+</html>
