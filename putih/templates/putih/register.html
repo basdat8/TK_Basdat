@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h2>Register</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ user_form.as_p }}
+
+    <label for="role">Choose your role:</label>
+    <select name="role" id="role">
+      <option value="pengunjung">Pengunjung</option>
+      <option value="dokter_hewan">Dokter Hewan</option>
+      <option value="staf">Staf</option>
+    </select>
+
+    <!-- Form untuk Pengunjung -->
+    <div id="pengunjung_form" style="display:none;">
+        {{ pengunjung_form.as_p }}
+    </div>
+
+    <!-- Form untuk Dokter Hewan -->
+    <div id="dokter_hewan_form" style="display:none;">
+        {{ dokter_form.as_p }}
+    </div>
+
+    <!-- Form untuk Staf -->
+    <div id="staf_form" style="display:none;">
+        {{ staf_form.as_p }}
+    </div>
+
+    <button type="submit">Register</button>
+  </form>
+
+  <script>
+    document.getElementById("role").addEventListener("change", function() {
+      var role = this.value;
+      document.getElementById("pengunjung_form").style.display = (role == "pengunjung") ? "block" : "none";
+      document.getElementById("dokter_hewan_form").style.display = (role == "dokter_hewan") ? "block" : "none";
+      document.getElementById("staf_form").style.display = (role == "staf") ? "block" : "none";
+    });
+  </script>
+{% endblock %}

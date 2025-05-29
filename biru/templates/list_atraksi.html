@@ -1,0 +1,43 @@
+<!-- templates/list_atraksi.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Daftar Atraksi</title>
+</head>
+<body>
+    <h1>Daftar Atraksi</h1>
+
+    <a href="{% url 'tambah_atraksi' %}">Tambah Atraksi</a>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Nama</th>
+                <th>Lokasi</th>
+                <th>Kapasitas</th>
+                <th>Jadwal</th>
+                <th>Pelatih</th>
+                <th>Hewan</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for atraksi in data %}
+            <tr>
+                <td>{{ atraksi.nama }}</td>
+                <td>{{ atraksi.lokasi }}</td>
+                <td>{{ atraksi.kapasitas }}</td>
+                <td>{{ atraksi.jadwal }}</td>
+                <td>{{ atraksi.pelatih }}</td>
+                <td>{{ atraksi.hewan }}</td>
+                <td>
+                    <a href="{% url 'edit_atraksi' atraksi.id %}">Edit</a> |
+                    <a href="{% url 'hapus_atraksi' atraksi.id %}" onclick="return confirm('Yakin ingin menghapus atraksi ini?')">Hapus</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="7">Tidak ada atraksi</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

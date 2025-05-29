@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rekam Medis</title>
+
+    <style>
+        /* Table styling */
+        .table-container {
+            border-collapse: collapse;
+            font-family: Arial, sans-serif;
+            width: 100%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .table-container th,
+        .table-container td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .table-container th {
+            background-color: #4CAF50;
+            color: white;
+            border-bottom: 2px solid #006b1b;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .table-container tr {
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .table-container tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .table-container tr:hover {
+            background-color: #e9f7fe;
+        }
+
+        .table-container tr:last-child,
+        .table-container td:last-child {
+            border-right: none;
+        }
+
+        /* Modal backdrop */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Modal content box */
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Form styling */
+        .modal-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        /* Button styling */
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+
+        .btn-table{
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 8px 16px;
+            margin: 3px;
+            border-radius: 4px;
+        }
+        .btn-table:hover{
+            opacity: 0.8;
+        }
+
+        .btn-submit {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            padding: 8px 16px;
+            margin: 3px;
+        }
+        .btn-submit:hover {
+            opacity: 0.8;
+        }
+
+        .btn-cancel {
+            background-color: #999999;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            padding: 8px 16px;
+            margin: 3px;
+        }
+
+        .btn-cancel:hover {
+            opacity: 0.8;
+        }
+
+        .btn-delete-form {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            padding: 8px 16px;
+            margin: 3px;
+        }
+
+        .btn-delete-form:hover {
+            opacity: 0.8;
+        }
+
+        /* Open modal button */
+        .btn-add-catatan {
+            padding: 10px 20px;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        .btn-add-catatan:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+
+<body>
+<h1>Pemberian Pakan</h1>
+<button class="btn-add-catatan" onclick="openAddForm()">+Tambah Pemberian Pakan</button><br>
+
+<table class="table-container">
+    <thead>
+    <tr>
+        <th>Jenis Pakan</th>
+        <th>Jumlah Pakan (gram)</th>
+        <th>Jadwal</th>
+        <th>Status</th>
+        <th>Aksi</th>
+    </thead>
+    {%  for pakan in data %}
+    <tbody>
+        <td>{{ pakan.jenis }}</td>
+        <td>{{ pakan.jumlah }}</td>
+        <td>{{ pakan.jadwal }}</td>
+        <td>{{ pakan.status }}</td>
+        <td>
+            {% if pakan.status == "Tidak diberikan" or pakan.status == "Menunggu Pemberian" %}
+            <button class="btn-table" onclick="updateStatus()">Beri Pakan</button>
+            {% endif %}
+
+            <button class="btn-table" onclick="openEditForm()">Edit</button>
+            <button class="btn-table" onclick="openDeleteConfirmation()">Hapus</button>
+        </td>
+    {% endfor %}
+    </tbody>
+</table>
+
+
+<!-- Add form modal -->
+<div id="addForm" class="modal">
+    <div class="modal-content">
+        <h2>FORM TAMBAH PEMBERIAN PAKAN</h2>
+        <form id="modalForm" class="modal-form" method="POST" action="{% url 'add_pemberian_pakan' id_hewan=id_hewan %}">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="jenis">Jenis Pakan:</label>
+                <input type="text" id="jenis" name="jenis" required><br>
+            </div>
+
+            <div class="form-group">
+                    <label for="jumlah">Jumlah Pakan (gram):</label>
+                <input type="number" id="jumlah" name="jumlah" required><br>
+            </div>
+
+           <div class="form-group">
+                <label for="jadwal_pakan">Jadwal:</label>
+                <input type="datetime-local" id="jadwal_pakan" name="jadwal_pakan" required><br>
+            </div>
+
+            <div class="form-buttons">
+                <button type="submit" class="btn btn-submit">Simpan</button>
+                <button type="button" class="btn btn-cancel" onclick="closeModal()">Batal</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Add form modal -->
+<div id="editForm" class="modal">
+    <div class="modal-content">
+        <h2>EDIT PEMBERIAN PAKAN</h2>
+        <form id="modalForm" class="modal-form" method="POST" action="{% url 'edit_pemberian_pakan' id_hewan=id_hewan %}">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="jenis_baru">Jenis Pakan Baru:</label>
+                <input type="text" id="jenis_baru" name="jenis_baru" required><br>
+            </div>
+
+            <div class="form-group">
+                    <label for="jumlah_baru">Jumlah Pakan Baru (gram):</label>
+                <input type="number" id="jumlah_baru" name="jumlah_baru" required><br>
+            </div>
+
+           <div class="form-group">
+                <label for="jadwal_pakan_baru">Jadwal:</label>
+                <input type="datetime-local" id="jadwal_pakan_baru" name="jadwal_pakan_baru" required><br>
+            </div>
+
+            <div class="form-buttons">
+                <button type="submit" class="btn btn-submit">Simpan</button>
+                <button type="button" class="btn btn-cancel" onclick="closeModal()">Batal</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- Delete Modal -->
+<div id="deleteData" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>HAPUS PEMBERIAN PAKAN</h2>
+        <p>Apakah anda yakin ingin menghapus data pemberian pakan ini?</p>
+        {% csrf_token %}
+        <form id="deleteForm" method="POST" action="{% url 'delete_pemberian_pakan' id_hewan=id_hewan %}">
+            <div class="modal-buttons">
+                <button type="submit" id="confirmBtn" class="btn-delete-form">Ya</button>
+                <button type="button" id="cancelBtn" class="btn-submit" onclick="closeModal()">Tidak</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script>
+    const addForm = document.getElementById('addForm');
+    const editForm = document.getElementById('editForm');
+    const deleteData = document.getElementById('deleteData');
+
+    function openAddForm() {
+        addForm.style.display = 'flex';
+    }
+
+    function openEditForm() {
+        editForm.style.display = 'flex';
+    }
+
+    function openDeleteConfirmation() {
+        deleteData.style.display = 'flex';
+    }
+
+    function closeModal() {
+        addForm.style.display = 'none';
+        editForm.style.display = 'none';
+        deleteData.style.display = 'none';
+    }
+
+    function updateStatus() {}
+</script>

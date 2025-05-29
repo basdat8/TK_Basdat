@@ -1,0 +1,337 @@
+<!-- Tambahan dalam file HTML -->
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Program Adopsi Satwa</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px;
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .main-container {
+            display: block;
+        }
+
+        .hewan-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .hewan-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px;
+            width: 300px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .hewan-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 8px 15px;
+            margin: 5px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .button.secondary {
+            background-color: #f44336;
+        }
+
+        .button:hover {
+            opacity: 0.8;
+        }
+
+        hr {
+            margin: 30px 0;
+            border: 0;
+            height: 1px;
+            background-color: #ddd;
+        }
+
+        .detail-container {
+            display: none;
+            padding: 20px;
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .detail-container img {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .back-button {
+            margin-bottom: 20px;
+        }
+
+        .laporan-kondisi table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .laporan-kondisi th, .laporan-kondisi td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .laporan-kondisi th {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Program Adopsi Satwa: Bantu Mereka dengan Cinta</h1>
+    <p>Terima kasih telah mewujudkan kepedulian Anda terhadap satwa dengan menjadi adopter simbolis!</p>
+</header>
+
+<div id="main-container" class="main-container">
+    <h2 style="text-align: center; margin-top: 20px;">Hewan yang Sedang Anda Adopsi</h2>
+    <div class="hewan-container">
+        {% for hewan in hewan_list %}
+        <div class="hewan-card">
+            <img src="{{ hewan.url_foto }}" alt="{{ hewan.nama }}">
+            <p><strong>Nama Hewan:</strong> {{ hewan.nama }}</p>
+            <p><strong>Spesies Hewan:</strong> {{ hewan.spesies }}</p>
+            <p><strong>Status Kesehatan Hewan:</strong> {{ hewan.status_kesehatan }}</p>
+            <button type="button" onclick="showDetail('{{ hewan.id }}')" class="button">Lihat Detail</button>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% for hewan in hewan_list %}
+<div id="detail-container-{{ hewan.id }}" class="detail-container" style="display:none;">
+    <button type="button" onclick="hideDetail('{{ hewan.id }}')" class="button back-button">Kembali</button>
+    <h2>Detail Hewan Adopsi</h2>
+    <img src="{{ hewan.url_foto }}" alt="{{ hewan.nama }}">
+    <p><strong>Nama hewan:</strong> {{ hewan.nama }}</p>
+    <p><strong>Spesies hewan:</strong> {{ hewan.spesies }}</p>
+    <p><strong>Habitat:</strong> {{ hewan.nama_habitat }}</p>
+    <div style="margin-top: 20px;">
+        <button type="button" onclick="showLaporan('{{ hewan.id }}')" class="button">Pantau Kondisi Hewan</button>
+        <button type="button" onclick="showCertificate('{{ hewan.id }}')" class="button">Lihat Sertifikat Adopsi</button>
+        <button type="button" class="button secondary" onclick="confirmBerhentiAdopsi('{{ hewan.id }}')">Berhenti Adopsi</button>
+        <button type="button" class="button" onclick="toggleForm('{{ hewan.id }}')">Perpanjang Periode Adopsi</button>
+    </div>
+
+    <!-- FORM PERPANJANGAN -->
+   <div id="form-perpanjang-{{ hewan.id }}" class="form-perpanjang">
+    <label for="tipeAdopter-{{ hewan.id }}">Tipe Adopter:</label>
+    <select id="tipeAdopter-{{ hewan.id }}" onchange="tampilkanForm('{{ hewan.id }}')">
+        <option value="">-- Pilih --</option>
+        <option value="individu">Individu</option>
+        <option value="organisasi">Organisasi</option>
+    </select>
+
+    <!-- Form Individu -->
+    <div id="formIndividu-{{ hewan.id }}" style="display:none;">
+        <label>Nama:</label><input type="text">
+        <label>NIK:</label><input type="text">
+        <label>Alamat:</label><input type="text">
+        <label>Telepon:</label><input type="text">
+        <label>Nominal Donasi (Rp):</label><input type="number">
+        <label>Durasi Perpanjangan:</label>
+        <select>
+            <option value="3">3 bulan</option>
+            <option value="6">6 bulan</option>
+            <option value="12">12 bulan</option>
+        </select>
+        <br><br>
+        <button class="button">Submit</button>
+    </div>
+
+    <!-- Form Organisasi -->
+    <div id="formOrganisasi-{{ hewan.id }}" style="display:none;">
+        <label>Nama Organisasi:</label><input type="text">
+        <label>NPP:</label><input type="text">
+        <label>Alamat:</label><input type="text">
+        <label>Kontak:</label><input type="text">
+        <label>Nominal Donasi (Rp):</label><input type="number">
+        <label>Durasi Perpanjangan:</label>
+        <select>
+            <option value="3">3 bulan</option>
+            <option value="6">6 bulan</option>
+            <option value="12">12 bulan</option>
+        </select>
+        <br><br>
+        <button class="button">Submit</button>
+    </div>
+</div>
+    <hr>
+
+    <!-- Sertifikat Adopsi -->
+    <div id="certificate-{{ hewan.id }}" style="display: none;">
+        <h2>Sertifikat Adopsi Satwa</h2>
+        <div style="border: 2px solid #4CAF50; padding: 20px; text-align: center;">
+            <p><strong>Sertifikat ini diberikan kepada</strong></p>
+            <p><strong>{{hewan.username_adopter}}</strong></p>
+            <p>yang telah mengadopsi satwa</p>
+            <p><strong>{{ hewan.jenis }} bernama {{ hewan.nama }}</strong></p>
+            <p>di taman safari secara simbolis dari {{ hewan.tgl_mulai_adopsi }} hingga {{ hewan.tgl_berhenti_adopsi }}.</p>
+            <p>Kami sangat berterima kasih atas kepedulian dan kontribusi Anda terhadap kelestarian satwa di taman safari.</p>
+        </div>
+        <div style="text-align: center; margin-top: 20px;">
+            <button onclick="hideCertificate('{{ hewan.id }}')" class="button">Kembali</button>
+        </div>
+    </div>
+
+    <!-- Laporan Kondisi -->
+    <div id="laporan-kondisi-{{ hewan.id }}" class="laporan-kondisi" style="display: none;">
+        <h3>Laporan Kondisi Satwa</h3>
+        <p><strong>Nama:</strong> {{ hewan.nama }}</p>
+        <p><strong>Spesies:</strong> {{ hewan.spesies }}</p>
+        <p><strong>Habitat:</strong> {{ hewan.habitat }}</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Tanggal Pemeriksaan</th>
+                    <th>Nama Dokter</th>
+                    <th>Status Kesehatan</th>
+                    <th>Diagnosa</th>
+                    <th>Pengobatan</th>
+                    <th>Catatan Tindak Lanjut</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Data dummy -->
+                <tr>
+                    <td>2024-03-01</td>
+                    <td>Dr. Rina</td>
+                    <td>Sehat</td>
+                    <td>Tidak ada</td>
+                    <td>-</td>
+                    <td>Kontrol rutin</td>
+                </tr>
+                <tr>
+                    <td>2024-01-15</td>
+                    <td>Dr. Andi</td>
+                    <td>Sakit Ringan</td>
+                    <td>Infeksi ringan</td>
+                    <td>Antibiotik 5 hari</td>
+                    <td>Perlu pengecekan lanjutan</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div style="text-align: right; margin-top: 15px;">
+            <button onclick="hideLaporan({{ hewan.id }})" class="button">Tutup</button>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<script>
+    function showDetail(hewanId) {
+        document.getElementById('main-container').style.display = 'none';
+        document.getElementById('detail-container-' + hewanId).style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function hideDetail(hewanId) {
+        document.getElementById('detail-container-' + hewanId).style.display = 'none';
+        document.getElementById('main-container').style.display = 'block';
+    }
+
+    function showCertificate(hewanId) {
+        const detailContainer = document.getElementById('detail-container-' + hewanId);
+        for (let child of detailContainer.children) {
+            if (child.id !== 'certificate-' + hewanId) {
+                child.style.display = 'none';
+            }
+        }
+        document.getElementById('certificate-' + hewanId).style.display = 'block';
+    }
+
+    function hideCertificate(hewanId) {
+        document.getElementById('certificate-' + hewanId).style.display = 'none';
+        // Tampilkan kembali semua elemen di detail-container
+        const detailContainer = document.getElementById('detail-container-' + hewanId);
+        for (let child of detailContainer.children) {
+            if (child.id && child.id !== 'certificate-' + hewanId) {
+                child.style.display = 'block';
+            }
+        }
+    }
+
+    function showLaporan(hewanId) {
+        const detailContainer = document.getElementById('detail-container-' + hewanId);
+        for (let child of detailContainer.children) {
+            if (child.id !== 'laporan-kondisi-' + hewanId) {
+                child.style.display = 'none';
+            }
+        }
+        document.getElementById('laporan-kondisi-' + hewanId).style.display = 'block';
+    }
+
+    function hideLaporan(hewanId) {
+        document.getElementById('laporan-kondisi-' + hewanId).style.display = 'none';
+        // Tampilkan kembali semua elemen di detail-container
+        const detailContainer = document.getElementById('detail-container-' + hewanId);
+        for (let child of detailContainer.children) {
+            // Tampilkan semua anak kecuali laporan kondisi
+            if (child.id !== 'laporan-kondisi-' + hewanId) {
+                child.style.display = '';
+            }
+        }
+    }
+
+    function confirmBerhentiAdopsi(hewanId) {
+        const konfirmasi = confirm("Apakah Anda yakin ingin berhenti mengadopsi hewan ini?");
+        if (konfirmasi) {
+            alert("Adopsi telah dihentikan untuk hewan dengan ID: " + hewanId);
+            // Tambahkan request ke server di sini bila perlu
+        }
+    }
+    function toggleForm(id) {
+            const form = document.getElementById('form-perpanjang-' + id);
+            form.style.display = (form.style.display === 'none' || form.style.display === '') ? 'block' : 'none';
+        }
+
+    function tampilkanForm(id) {
+            const tipe = document.getElementById('tipeAdopter-' + id).value;
+            document.getElementById('formIndividu-' + id).style.display = tipe === 'individu' ? 'block' : 'none';
+            document.getElementById('formOrganisasi-' + id).style.display = tipe === 'organisasi' ? 'block' : 'none';
+        }
+</script>
+</body>
+</html>
