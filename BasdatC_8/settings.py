@@ -51,7 +51,6 @@ INSTALLED_APPS = [
     'authuser',
     'kuning',
     'adopsi',
-    'biru',
 ]
 
 MIDDLEWARE = [
